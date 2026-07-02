@@ -14,7 +14,8 @@ button{background:#f9bc04;color:#012060;border:none;padding:14px 28px;font-size:
 button:hover{transform:scale(1.02)}
 .hidden{display:none}
 .operation{font-size:40px;font-weight:bold;margin:20px 0;color:#012060}
-input{font-size:30px;width:240px;text-align:center;padding:12px}
+input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding:12px;margin:6px auto;display:block;border:1px solid #ccc;border-radius:8px}
+#answer{font-size:30px;width:240px}
 .big{font-size:62px;font-weight:900;color:#012060}
 .info{font-size:32px;font-weight:700;color:#f9bc04}
 .result{font-size:24px;line-height:1.8}
@@ -26,6 +27,10 @@ input{font-size:30px;width:240px;text-align:center;padding:12px}
 .miss-expr{font-weight:700;color:#012060}
 .miss-your{color:#c0392b;font-weight:700}
 .miss-ok{color:#1e8449;font-weight:700}
+.form-grid{margin:16px auto;max-width:460px}
+.form-grid label{display:block;text-align:left;font-weight:700;color:#012060;margin-top:10px}
+.small-note{font-size:14px;color:#444;margin:8px auto 0;max-width:460px}
+#saveStatus{font-size:16px;color:#012060;font-weight:700;margin:14px 0}
 </style>
 </head>
 <body>
@@ -34,6 +39,24 @@ input{font-size:30px;width:240px;text-align:center;padding:12px}
 <h1>🧠 Explora tu cerebro en 90 segundos</h1>
 <p>Resuelve desafíos cada vez más difíciles.<br>La velocidad importa.<br>La precisión también.</p>
 <p>⚡ Puntuación · 🎯 Precisión · 🏆 Nivel alcanzado</p>
+<div class="form-grid">
+<label for="participante">Participante</label>
+<input id="participante" type="text" placeholder="Nombre y apellido" autocomplete="name" required>
+<label for="ciudad">Ciudad</label>
+<input id="ciudad" type="text" placeholder="Ciudad" autocomplete="address-level2" required>
+<label for="edad">Edad</label>
+<input id="edad" type="number" min="3" max="100" placeholder="Edad" required>
+<label for="idCarv">ID CArV, si corresponde</label>
+<input id="idCarv" type="text" placeholder="Opcional">
+<label for="relacionCar">Relación con el Cacho Aritmético</label>
+<select id="relacionCar">
+<option value="Nueva">Nueva</option>
+<option value="Antigua">Antigua</option>
+<option value="Cachódromo Virtual">Cachódromo Virtual</option>
+<option value="Otra">Otra</option>
+</select>
+<p class="small-note">Estos datos permiten registrar automáticamente tu resultado en la base oficial.</p>
+</div>
 <button onclick="startGame()">COMENZAR</button>
 </div>
 
@@ -61,6 +84,7 @@ input{font-size:30px;width:240px;text-align:center;padding:12px}
 <h3>📋 Repaso de tus errores</h3>
 <div id="mistakesList"></div>
 </div>
+<div id="saveStatus">Registrando resultado...</div>
 <button onclick="shareResult()">COMPARTIR RESULTADO</button>
 <br><br>
 <button onclick="location.reload()">JUGAR DE NUEVO</button>
@@ -75,12 +99,32 @@ let streak=0,maxStreak=0;
 let upCount=0,downCount=0;
 let currentAnswer=0,currentExpr="";
 let mistakes=[];
+let playerData={};
+let gameStartTime=null;
+let resultAlreadySent=false;
+const URL_APPS_SCRIPT='https://script.google.com/macros/s/AKfycbyZ_cRgEZ9i5kV05n6rR7nKz1p6C7EFF9TeWORBbm0x0CIXaC8eIy2C8dHddhGjILnYyg/exec';
 
 let bestSession=localStorage.getItem("bestScore90")||0;
 
 function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 
 function startGame(){
+ const participante=document.getElementById("participante").value.trim();
+ const ciudad=document.getElementById("ciudad").value.trim();
+ const edad=parseInt(document.getElementById("edad").value,10);
+ if(!participante || !ciudad || !edad){
+   alert("Por favor registra participante, ciudad y edad antes de comenzar.");
+   return;
+ }
+ playerData={
+   participante,
+   ciudad,
+   edad,
+   id_carv:document.getElementById("idCarv").value.trim(),
+   relacion_car:document.getElementById("relacionCar").value
+ };
+ localStorage.setItem("ctcPlayerData90", JSON.stringify(playerData));
+ gameStartTime=Date.now();
  document.getElementById("start").classList.add("hidden");
  document.getElementById("game").classList.remove("hidden");
  generateQuestion();
@@ -145,6 +189,14 @@ function generateQuestion(){
 }
 
 document.addEventListener("DOMContentLoaded",()=>{
+ try{
+   const saved=JSON.parse(localStorage.getItem("ctcPlayerData90")||"{}");
+   if(saved.participante) document.getElementById("participante").value=saved.participante;
+   if(saved.ciudad) document.getElementById("ciudad").value=saved.ciudad;
+   if(saved.edad) document.getElementById("edad").value=saved.edad;
+   if(saved.id_carv) document.getElementById("idCarv").value=saved.id_carv;
+   if(saved.relacion_car) document.getElementById("relacionCar").value=saved.relacion_car;
+ }catch(e){}
  document.getElementById("answer").addEventListener("keydown",e=>{
   if(e.key==="Enter"){
    let v=parseInt(e.target.value);
@@ -172,6 +224,56 @@ function factor(p){
  if(p>=75) return .65;
  if(p>=70) return .5;
  return .25;
+}
+
+function crearIdPartida(){
+ if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+ return 'partida-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+}
+
+function categoriaPorEdadLocal(edad){
+ if(!edad) return '';
+ if(edad<=13) return 'Niño';
+ if(edad<=17) return 'Joven';
+ if(edad<=59) return 'Adulto';
+ return 'Adulto Mayor';
+}
+
+function getDispositivo(){
+ return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'MÓVIL' : 'PC';
+}
+
+async function enviarResultadoAutomatico(resultado){
+ const payload={
+   id_partida:crearIdPartida(),
+   participante:playerData.participante || '',
+   ciudad:playerData.ciudad || '',
+   edad:playerData.edad || '',
+   categoria:categoriaPorEdadLocal(playerData.edad),
+   id_carv:playerData.id_carv || '',
+   relacion_car:playerData.relacion_car || '',
+   puntuacion:resultado.puntuacion,
+   precision:resultado.precision,
+   correctas:resultado.correctas,
+   errores:resultado.errores,
+   nivel_maximo:resultado.nivel_maximo,
+   nivel_final:resultado.nivel_final,
+   racha_maxima:resultado.racha_maxima,
+   mejor_puntuacion_sesion:resultado.mejor_puntuacion_sesion,
+   observaciones:mistakes.length ? 'Errores: ' + mistakes.map(m=>`${m.expr} | Tu: ${m.your} | OK: ${m.correct}`).join(' ; ') : '',
+   otros:'',
+   dispositivo:getDispositivo(),
+   navegador:navigator.userAgent,
+   duracion_real:gameStartTime ? Math.round((Date.now()-gameStartTime)/1000) + ' s' : '90 s',
+   origen:'JUEGO GITHUB'
+ };
+
+ await fetch(URL_APPS_SCRIPT,{
+   method:'POST',
+   mode:'no-cors',
+   headers:{'Content-Type':'text/plain;charset=utf-8'},
+   body:JSON.stringify(payload)
+ });
 }
 
 function endGame(){
@@ -217,6 +319,23 @@ function endGame(){
    box.classList.remove("hidden");
  }else{
    box.classList.add("hidden");
+ }
+
+ if(!resultAlreadySent){
+   resultAlreadySent=true;
+   const resultado={
+     puntuacion:score,
+     precision:p.toFixed(1)+"%",
+     correctas:correct,
+     errores:errors,
+     nivel_maximo:maxLevel,
+     nivel_final:level,
+     racha_maxima:maxStreak,
+     mejor_puntuacion_sesion:bestSession
+   };
+   enviarResultadoAutomatico(resultado)
+    .then(()=>{document.getElementById("saveStatus").innerText="✅ Resultado registrado automáticamente.";})
+    .catch(()=>{document.getElementById("saveStatus").innerText="⚠️ No se pudo registrar automáticamente. Usa COMPARTIR RESULTADO como respaldo.";});
  }
 }
 
