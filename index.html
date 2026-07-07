@@ -36,26 +36,48 @@ input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding
 <body>
 <div class="container">
 <div id="start" class="card">
-<h1>🧠 Explora tu cerebro en 90 segundos</h1>
-<p>Resuelve desafíos cada vez más difíciles.<br>La velocidad importa.<br>La precisión también.</p>
+<h1>🏟️ Centro de Torneos CALCLANDIA</h1>
+<p><strong>Tu Cerebro en 90 segundos</strong></p>
+<p>Identifícate para registrar tu participación en el CTC.<br>Luego presiona COMENZAR.</p>
 <p>⚡ Puntuación · 🎯 Precisión · 🏆 Nivel alcanzado</p>
 <div class="form-grid">
-<label for="participante">Participante</label>
+<label for="participante">Nombre completo</label>
 <input id="participante" type="text" placeholder="Nombre y apellido" autocomplete="name" required>
+
+<label for="fechaNacimiento">Fecha de nacimiento</label>
+<input id="fechaNacimiento" type="date" required>
+
 <label for="ciudad">Ciudad</label>
-<input id="ciudad" type="text" placeholder="Ciudad" autocomplete="address-level2" required>
-<label for="edad">Edad</label>
-<input id="edad" type="number" min="3" max="100" placeholder="Edad" required>
-<label for="idCarv">ID CArV, si corresponde</label>
-<input id="idCarv" type="text" placeholder="Opcional">
-<label for="relacionCar">Relación con el Cacho Aritmético</label>
-<select id="relacionCar">
-<option value="Nueva">Nueva</option>
-<option value="Antigua">Antigua</option>
-<option value="Cachódromo Virtual">Cachódromo Virtual</option>
+<select id="ciudad" required>
+<option value="">Selecciona tu ciudad</option>
+<option value="Oruro">Oruro</option>
+<option value="Cochabamba">Cochabamba</option>
+<option value="Quillacollo">Quillacollo</option>
+<option value="La Paz">La Paz</option>
+<option value="El Alto">El Alto</option>
+<option value="Potosí">Potosí</option>
+<option value="Sucre">Sucre</option>
+<option value="Tarija">Tarija</option>
+<option value="Santa Cruz">Santa Cruz</option>
+<option value="Challapata">Challapata</option>
+<option value="Huanuni">Huanuni</option>
+<option value="San Cristóbal">San Cristóbal</option>
 <option value="Otra">Otra</option>
 </select>
-<p class="small-note">Estos datos permiten registrar automáticamente tu resultado en la base oficial.</p>
+
+<label for="relacionCar">Relación con el Cacho Aritmético</label>
+<select id="relacionCar" required>
+<option value="">Selecciona una opción</option>
+<option value="Primera vez">Primera vez</option>
+<option value="Participante del Cachódromo Virtual">Participante del Cachódromo Virtual</option>
+<option value="Exparticipante">Exparticipante</option>
+<option value="Padre/Madre/Familiar">Padre/Madre/Familiar</option>
+<option value="Profesor(a)">Profesor(a)</option>
+<option value="Otra">Otra</option>
+</select>
+
+<div class="small-note" id="datosCalculados">Edad y categoría se calcularán automáticamente.</div>
+<p class="small-note">El sistema queda preparado para generar automáticamente el ID CTC.</p>
 </div>
 <button onclick="startGame()">COMENZAR</button>
 </div>
@@ -108,20 +130,69 @@ let bestSession=localStorage.getItem("bestScore90")||0;
 
 function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 
+function validarNombreCompleto(nombre){
+ return nombre.trim().split(/\s+/).length>=2;
+}
+
+function calcularEdad(fechaNacimiento){
+ if(!fechaNacimiento) return '';
+ const hoy=new Date();
+ const nac=new Date(fechaNacimiento+'T00:00:00');
+ if(isNaN(nac.getTime()) || nac>hoy) return '';
+ let edad=hoy.getFullYear()-nac.getFullYear();
+ const m=hoy.getMonth()-nac.getMonth();
+ if(m<0 || (m===0 && hoy.getDate()<nac.getDate())) edad--;
+ return edad;
+}
+
+function limpiarTextoId(txt){
+ return (txt||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9]/g,'').toUpperCase();
+}
+
+function generarIdCTC(nombre, fechaNacimiento, ciudad){
+ const iniciales=nombre.trim().split(/\s+/).map(p=>p[0]||'').join('').slice(0,4).toUpperCase();
+ const fecha=(fechaNacimiento||'').replace(/-/g,'');
+ const ciudadCod=limpiarTextoId(ciudad).slice(0,3);
+ return `CTC-${ciudadCod}-${fecha}-${iniciales}`;
+}
+
+function actualizarDatosCalculados(){
+ const fecha=document.getElementById("fechaNacimiento").value;
+ const edad=calcularEdad(fecha);
+ const categoria=categoriaPorEdadLocal(edad);
+ const el=document.getElementById("datosCalculados");
+ if(edad){ el.innerText=`Edad: ${edad} años · Categoría: ${categoria}`; }
+ else{ el.innerText="Edad y categoría se calcularán automáticamente."; }
+}
+
 function startGame(){
  const participante=document.getElementById("participante").value.trim();
- const ciudad=document.getElementById("ciudad").value.trim();
- const edad=parseInt(document.getElementById("edad").value,10);
- if(!participante || !ciudad || !edad){
-   alert("Por favor registra participante, ciudad y edad antes de comenzar.");
+ const fecha_nacimiento=document.getElementById("fechaNacimiento").value;
+ const ciudad=document.getElementById("ciudad").value;
+ const relacion_car=document.getElementById("relacionCar").value;
+ const edad=calcularEdad(fecha_nacimiento);
+ const categoria=categoriaPorEdadLocal(edad);
+ if(!validarNombreCompleto(participante)){
+   alert("Por favor registra nombre completo: nombre y apellido.");
+   return;
+ }
+ if(!fecha_nacimiento || !edad){
+   alert("Por favor registra una fecha de nacimiento válida.");
+   return;
+ }
+ if(!ciudad || !relacion_car){
+   alert("Por favor selecciona ciudad y relación con el Cacho Aritmético.");
    return;
  }
  playerData={
    participante,
+   fecha_nacimiento,
    ciudad,
    edad,
-   id_carv:document.getElementById("idCarv").value.trim(),
-   relacion_car:document.getElementById("relacionCar").value
+   categoria,
+   id_carv:'',
+   id_ctc:generarIdCTC(participante, fecha_nacimiento, ciudad),
+   relacion_car
  };
  localStorage.setItem("ctcPlayerData90", JSON.stringify(playerData));
  gameStartTime=Date.now();
@@ -192,11 +263,13 @@ document.addEventListener("DOMContentLoaded",()=>{
  try{
    const saved=JSON.parse(localStorage.getItem("ctcPlayerData90")||"{}");
    if(saved.participante) document.getElementById("participante").value=saved.participante;
+   if(saved.fecha_nacimiento) document.getElementById("fechaNacimiento").value=saved.fecha_nacimiento;
    if(saved.ciudad) document.getElementById("ciudad").value=saved.ciudad;
-   if(saved.edad) document.getElementById("edad").value=saved.edad;
-   if(saved.id_carv) document.getElementById("idCarv").value=saved.id_carv;
    if(saved.relacion_car) document.getElementById("relacionCar").value=saved.relacion_car;
+   actualizarDatosCalculados();
  }catch(e){}
+ document.getElementById("fechaNacimiento").addEventListener("change",actualizarDatosCalculados);
+ document.getElementById("fechaNacimiento").addEventListener("input",actualizarDatosCalculados);
  document.getElementById("answer").addEventListener("keydown",e=>{
   if(e.key==="Enter"){
    let v=parseInt(e.target.value);
@@ -248,9 +321,11 @@ async function enviarResultadoAutomatico(resultado){
    id_partida:crearIdPartida(),
    participante:playerData.participante || '',
    ciudad:playerData.ciudad || '',
+   fecha_nacimiento:playerData.fecha_nacimiento || '',
    edad:playerData.edad || '',
-   categoria:categoriaPorEdadLocal(playerData.edad),
+   categoria:playerData.categoria || categoriaPorEdadLocal(playerData.edad),
    id_carv:playerData.id_carv || '',
+   id_ctc:playerData.id_ctc || '',
    relacion_car:playerData.relacion_car || '',
    puntuacion:resultado.puntuacion,
    precision:resultado.precision,
