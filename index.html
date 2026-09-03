@@ -316,41 +316,199 @@ function getDispositivo(){
  return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'MÓVIL' : 'PC';
 }
 
-async function enviarResultadoAutomatico(resultado){
- const payload={
-   id_partida:crearIdPartida(),
-   participante:playerData.participante || '',
-   ciudad:playerData.ciudad || '',
-   fecha_nacimiento:playerData.fecha_nacimiento || '',
-   edad:playerData.edad || '',
-   categoria:playerData.categoria || categoriaPorEdadLocal(playerData.edad),
-   id_carv:playerData.id_carv || '',
-   id_ctc:playerData.id_ctc || '',
-   relacion_car:playerData.relacion_car || '',
-   puntuacion:resultado.puntuacion,
-   precision:resultado.precision,
-   correctas:resultado.correctas,
-   errores:resultado.errores,
-   nivel_maximo:resultado.nivel_maximo,
-   nivel_final:resultado.nivel_final,
-   racha_maxima:resultado.racha_maxima,
-   mejor_puntuacion_sesion:resultado.mejor_puntuacion_sesion,
-   observaciones:mistakes.length ? 'Errores: ' + mistakes.map(m=>`${m.expr} | Tu: ${m.your} | OK: ${m.correct}`).join(' ; ') : '',
-   otros:'',
-   dispositivo:getDispositivo(),
-   navegador:navigator.userAgent,
-   duracion_real:gameStartTime ? Math.round((Date.now()-gameStartTime)/1000) + ' s' : '90 s',
-   origen:'JUEGO GITHUB'
- };
+async function enviarResultadoAutomatico(resultado) {
+  const payload = {
+    id_partida: crearIdPartida(),
+    participante: playerData.participante || '',
+    ciudad: playerData.ciudad || '',
+    fecha_nacimiento:
+      playerData.fecha_nacimiento || '',
+    edad: playerData.edad || '',
+    categoria:
+      playerData.categoria ||
+      categoriaPorEdadLocal(playerData.edad),
+    id_carv: playerData.id_carv || '',
+    id_ctc: playerData.id_ctc || '',
+    relacion_car: playerData.relacion_car || '',
+    puntuacion: resultado.puntuacion,
+    precision: resultado.precision,
+    correctas: resultado.correctas,
+    errores: resultado.errores,
+    nivel_maximo: resultado.nivel_maximo,
+    nivel_final: resultado.nivel_final,
+    racha_maxima: resultado.racha_maxima,
+    mejor_puntuacion_sesion:
+      resultado.mejor_puntuacion_sesion,
+    observaciones: mistakes.length
+      ? 'Errores: ' +
+        mistakes
+          .map(
+            m =>
+              `${m.expr} | Tu: ${m.your} | OK: ${m.correct}`
+          )
+          .join(' ; ')
+      : '',
+    otros: '',
+    dispositivo: getDispositivo(),
+    navegador: navigator.userAgent,
+    duracion_real: gameStartTime
+      ? Math.round(
+          (Date.now() - gameStartTime) / 1000
+        ) + ' s'
+      : '90 s',
+    origen: 'JUEGO GITHUB'
+  };
 
- await fetch(URL_APPS_SCRIPT,{
-   method:'POST',
-   mode:'no-cors',
-   headers:{'Content-Type':'text/plain;charset=utf-8'},
-   body:JSON.stringify(payload)
- });
+  function guardarPendiente() {
+    try {
+      sessionStorage.setItem(
+        'ctc_resultado_pendiente',
+        JSON.stringify(payload)
+      );
+    } catch (e) {}
+  }
+
+  function eliminarPendiente() {
+    try {
+      sessionStorage.removeItem(
+        'ctc_resultado_pendiente'
+      );
+    } catch (e) {}
+  }
+
+  async function enviarPayload() {
+    const respuestaHttp = await fetch(
+      URL_APPS_SCRIPT,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type':
+            'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(payload)
+      }
+    );
+
+    const texto = await respuestaHttp.text();
+    let respuesta;
+
+    try {
+      respuesta = JSON.parse(texto);
+    } catch (e) {
+      throw new Error(
+        'Apps Script no devolvió una respuesta válida.'
+      );
+    }
+
+    if (!respuestaHttp.ok) {
+      throw new Error(
+        respuesta.mensaje ||
+        'Apps Script rechazó la solicitud.'
+      );
+    }
+
+    return respuesta;
+  }
+
+  guardarPendiente();
+
+  let respuesta = await enviarPayload();
+
+  if (
+    respuesta.codigo ===
+    'IDENTIDAD_REQUIERE_CONFIRMACION'
+  ) {
+    const candidatos = Array.isArray(
+      respuesta.candidatos
+    )
+      ? respuesta.candidatos
+      : [];
+
+    const lista = candidatos
+      .map(function(candidato, indice) {
+        return (
+          (indice + 1) + '. ' +
+          candidato.nombre +
+          ' | ' +
+          candidato.fechaNacimiento +
+          ' | ' +
+          candidato.municipio +
+          ' | ' +
+          candidato.idCtc
+        );
+      })
+      .join('\n');
+
+    const eleccion = window.prompt(
+      'Encontramos identidades relacionadas, ' +
+      'pero los datos son diferentes.\n\n' +
+      lista +
+      '\n\nEscribe el número de la identidad correcta.' +
+      '\nEscribe N solamente si realmente es otra persona.' +
+      '\nPulsa Cancelar para no registrar todavía.'
+    );
+
+    if (eleccion === null) {
+      throw new Error(
+        'Registro pendiente: no se confirmó la identidad.'
+      );
+    }
+
+    const opcion = eleccion.trim().toUpperCase();
+
+    if (opcion === 'N') {
+      const confirmacion = window.confirm(
+        '¿Confirma que se trata realmente de otra persona?' +
+        '\n\nSe creará un nuevo ID CTC.'
+      );
+
+      if (!confirmacion) {
+        throw new Error(
+          'Registro pendiente: no se confirmó una identidad nueva.'
+        );
+      }
+
+      payload.confirmar_nueva_identidad = true;
+      delete payload.id_ctc_confirmado;
+    } else {
+      const indiceElegido = Number(opcion) - 1;
+
+      if (
+        !Number.isInteger(indiceElegido) ||
+        indiceElegido < 0 ||
+        indiceElegido >= candidatos.length
+      ) {
+        throw new Error(
+          'Registro pendiente: la opción seleccionada no es válida.'
+        );
+      }
+
+      payload.id_ctc_confirmado =
+        candidatos[indiceElegido].idCtc;
+
+      delete payload.confirmar_nueva_identidad;
+    }
+
+    guardarPendiente();
+    respuesta = await enviarPayload();
+  }
+
+  if (!respuesta.ok) {
+    throw new Error(
+      respuesta.mensaje ||
+      'El resultado no fue registrado.'
+    );
+  }
+
+  if (respuesta.id_ctc) {
+    playerData.id_ctc = respuesta.id_ctc;
+  }
+
+  eliminarPendiente();
+
+  return respuesta;
 }
-
+ 
 function endGame(){
  clearInterval(timer);
  document.getElementById("game").classList.add("hidden");
@@ -396,22 +554,46 @@ function endGame(){
    box.classList.add("hidden");
  }
 
- if(!resultAlreadySent){
-   resultAlreadySent=true;
-   const resultado={
-     puntuacion:score,
-     precision:p.toFixed(1)+"%",
-     correctas:correct,
-     errores:errors,
-     nivel_maximo:maxLevel,
-     nivel_final:level,
-     racha_maxima:maxStreak,
-     mejor_puntuacion_sesion:bestSession
-   };
-   enviarResultadoAutomatico(resultado)
-    .then(()=>{document.getElementById("saveStatus").innerText="✅ Resultado registrado automáticamente.";})
-    .catch(()=>{document.getElementById("saveStatus").innerText="⚠️ No se pudo registrar automáticamente. Usa COMPARTIR RESULTADO como respaldo.";});
- }
+ if (!resultAlreadySent) {
+  resultAlreadySent = true;
+
+  const resultado = {
+    puntuacion: score,
+    precision: p.toFixed(1) + '%',
+    correctas: correct,
+    errores: errors,
+    nivel_maximo: maxLevel,
+    nivel_final: level,
+    racha_maxima: maxStreak,
+    mejor_puntuacion_sesion: bestSession
+  };
+
+  const estadoGuardado =
+    document.getElementById('saveStatus');
+
+  estadoGuardado.innerText =
+    '⏳ Registrando resultado...';
+
+  enviarResultadoAutomatico(resultado)
+    .then(function() {
+      estadoGuardado.innerText =
+        '✅ Resultado registrado automáticamente.';
+    })
+    .catch(function(error) {
+      resultAlreadySent = false;
+
+      estadoGuardado.innerText =
+        '⚠️ ' +
+        (error.message ||
+          'No se pudo registrar automáticamente.') +
+        ' Usa COMPARTIR RESULTADO como respaldo.';
+
+      console.error(
+        'Error al registrar el resultado:',
+        error
+      );
+    });
+}
 }
 
 function shareResult(){
