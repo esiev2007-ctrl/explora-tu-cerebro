@@ -220,7 +220,7 @@ input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding
 <div id="mistakesList"></div>
 </div>
 <div id="saveStatus">Registrando resultado...</div>
-<button onclick="shareResult()">COMPARTIR RESULTADO</button>
+<button id="shareButton" onclick="shareResult()" disabled>ESPERA: REGISTRANDO RESULTADO…</button>
 <div class="community-box">
  <h2>Comunidad CALCLANDIA</h2>
  <p>Recibe resúmenes, novedades e invitaciones a próximos torneos.</p>
@@ -852,6 +852,10 @@ function endGame(){
  document.getElementById("result").classList.remove("hidden");
  prepararEnlaceComunidad_();
 
+ const botonCompartir=document.getElementById('shareButton');
+ botonCompartir.disabled=true;
+ botonCompartir.innerText='ESPERA: REGISTRANDO RESULTADO…';
+
  let total=correct+errors;
  let p=total?correct/total*100:0;
 
@@ -914,6 +918,9 @@ document.getElementById("score").innerText=score;
       mostrarRecordsOficiales_(respuesta);
       estadoGuardado.innerText =
         '✅ Resultado registrado automáticamente.';
+      botonCompartir.disabled = false;
+      botonCompartir.innerText =
+        'COMPARTIR E INVITAR A JUGAR';
     })
     .catch(function(error) {
       resultAlreadySent = false;
@@ -928,6 +935,10 @@ document.getElementById("score").innerText=score;
         (error.message ||
           'No se pudo registrar automáticamente.') +
         ' Usa COMPARTIR RESULTADO como respaldo.';
+
+      botonCompartir.disabled = false;
+      botonCompartir.innerText =
+        'COMPARTIR E INVITAR A JUGAR';
 
       console.error(
         'Error al registrar el resultado:',
@@ -980,7 +991,8 @@ function mostrarRecordsOficiales_(respuesta){
  });
 }
 
-function shareResult(){
+async function shareResult(){
+ const urlJuego='https://esiev2007-ctrl.github.io/explora-tu-cerebro/';
  let txt=`🧠 CALCLANDIA: PRIMERA AVENTURA
 Tu cerebro en 90 segundos
 
@@ -1007,13 +1019,33 @@ Tu cerebro en 90 segundos
  }
 
  txt+=`\n\nSi quieres mejorar tu Cerebro, juega CACHO ARITMÉTICO`;
+ txt+=`\n\n🎯 ¿Puedes superar mi puntuación?`;
+ txt+=`\nJuega aquí:`;
+
+ const textoCompleto=txt+'\n'+urlJuego;
+
+ if(navigator.share){
+   try{
+     await navigator.share({
+       title:'CALCLANDIA: Primera Aventura',
+       text:txt,
+       url:urlJuego
+     });
+     return;
+   }catch(error){
+     if(error && error.name==='AbortError') return;
+   }
+ }
 
  if(navigator.clipboard){
-   navigator.clipboard.writeText(txt).then(()=>alert("Resultado copiado."))
-   .catch(()=>prompt("Copia tu resultado:",txt));
- }else{
-   prompt("Copia tu resultado:",txt);
+   try{
+     await navigator.clipboard.writeText(textoCompleto);
+     alert('Resultado e invitación copiados. Ya puedes compartirlos.');
+     return;
+   }catch(error){}
  }
+
+ prompt('Copia tu resultado y la invitación:',textoCompleto);
 }
 </script>
 </body>
