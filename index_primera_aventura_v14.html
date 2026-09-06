@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CALCLANDIA: Primera Aventura</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:Arial,sans-serif;background:#012060;margin:0;padding:0;text-align:center;color:#fff}
+.container{max-width:800px;margin:auto;padding:20px}
+.card{background:white;color:#222;padding:30px;margin-top:20px;border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.24)}
+h1{color:#012060;font-weight:600;font-size:30px}
+button{background:#f9bc04;color:#012060;border:none;padding:14px 28px;font-size:20px;border-radius:10px;cursor:pointer;font-weight:600}
+button:hover{transform:scale(1.02)}
+button:disabled{cursor:wait;opacity:.72;transform:none}
+.hidden{display:none}
+.operation{font-size:40px;font-weight:bold;margin:20px 0;color:#012060}
+input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding:12px;margin:6px auto;display:block;border:1px solid #ccc;border-radius:8px}
+#answer{font-size:30px;width:190px;margin:0}
+.answer-row{display:flex;align-items:center;justify-content:center;gap:10px;margin:12px auto 4px}
+.sign-button{width:58px;height:58px;padding:0;font-size:38px;line-height:1;border:2px solid #012060;background:#f9bc04;color:#012060}
+.sign-button.active{background:#012060;color:#fff;box-shadow:0 0 0 3px rgba(249,188,4,.5)}
+.sign-note{margin:6px 0 0;color:#365070;font-size:14px}
+.big{font-size:62px;font-weight:900;color:#012060}
+.info{font-size:32px;font-weight:700;color:#f9bc04}
+.result{font-size:24px;line-height:1.8}
+.result span{font-weight:700}
+.records-box{max-width:620px;margin:18px auto;padding:16px;background:#eef4fb;border:1px solid #bed3ea;border-radius:12px;color:#012060}
+.records-box p{margin:7px 0}
+.record-holders{font-size:16px;line-height:1.45;margin-top:8px}
+.mensaje-final{font-size:18px;font-weight:400;color:#222;margin-top:15px;padding:10px;background:#f9bc04;border-radius:10px}
+.mistakes{margin-top:20px;text-align:left}
+.mistakes h3{color:#012060;text-align:center;font-weight:600;margin:0 0 10px}
+.miss-item{background:#f4f6fb;border-radius:10px;padding:10px 14px;margin:8px 0;font-size:18px;display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;justify-content:space-between}
+.miss-expr{font-weight:700;color:#012060}
+.miss-your{color:#c0392b;font-weight:700}
+.miss-ok{color:#1e8449;font-weight:700}
+.form-grid{margin:16px auto;max-width:460px}
+.form-grid label{display:block;text-align:left;font-weight:700;color:#012060;margin-top:10px}
+.small-note{font-size:14px;color:#444;margin:8px auto 0;max-width:460px}
+#saveStatus{font-size:16px;color:#012060;font-weight:700;margin:14px 0}
+.brand{margin-bottom:20px}
+.brand-kicker{color:#012060;font-size:18px;font-weight:800;letter-spacing:2px;margin:0 0 4px}
+.brand-title{color:#012060;font-size:38px;line-height:1.05;font-weight:900;margin:0}
+.brand-title span{display:block;color:#f9bc04;font-size:30px;margin-top:7px}
+.brand-tagline{color:#012060;font-size:19px;font-weight:700;margin:13px 0 0}
+.brand-rule{width:92px;height:5px;background:#f9bc04;border-radius:99px;margin:15px auto 0}
+.brand-lockup{display:flex;flex-direction:column;align-items:center;margin-bottom:18px}
+.brand-lockup .brand{margin:10px 0 0}
+.brand-logo{display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid rgba(91,216,255,.42);border-radius:14px;padding:7px;box-shadow:0 8px 22px rgba(0,0,0,.24)}
+.brand-logo img{display:block;width:100%;height:auto;object-fit:contain}
+.brand-logo-calclandia{width:138px;aspect-ratio:1/1;padding:2px;overflow:hidden}
+.brand-logo-calclandia img{width:100%;max-width:100%;transform:none}
+.brand-support{display:flex;justify-content:center;margin-top:12px}
+.brand-logo-cacho{width:112px;height:auto;padding:2px 3px;border-radius:7px;overflow:hidden;justify-content:center;box-shadow:0 5px 14px rgba(0,0,0,.18)}
+.brand-logo-cacho img{width:100%;max-width:100%;transform:none}
+.community-box{max-width:620px;margin:20px auto 4px;padding:18px;background:#fff7d6;border:1px solid #edcf70;border-radius:12px;color:#012060}
+.community-box h2{margin:0 0 7px;font-size:22px}
+.community-box p{margin:6px auto;line-height:1.4}
+.community-box .guardian-note{font-size:14px;color:#365070}
+.community-button{display:inline-block;margin-top:9px;padding:13px 20px;background:#128c4a;color:#fff;border-radius:10px;text-decoration:none;font-size:17px;font-weight:700}
+.community-button:hover{transform:scale(1.02)}
+.intro{max-width:520px;margin:0 auto 12px;line-height:1.5}
+.two-columns{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.two-columns label{margin-top:10px}
+.relation-options{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px}
+.relation-option{display:flex!important;flex-direction:column;align-items:center;text-align:center!important;color:#012060;font-size:13px;font-weight:600!important;line-height:1.2;margin:0!important;padding:8px 4px;border:1px solid #d7dfec;border-radius:10px;cursor:pointer}
+.relation-option{grid-column:span 2}
+.relation-option:nth-child(4),.relation-option:nth-child(5){grid-column:span 3}
+.relation-option input{width:20px;height:20px;margin:0 0 7px;accent-color:#012060}
+.catalog-note{min-height:18px}
+#start{position:relative;overflow:hidden;color:#fff;background:radial-gradient(circle at 50% 18%,rgba(22,112,187,.95),transparent 31%),radial-gradient(circle at 12% 74%,rgba(0,111,214,.62),transparent 32%),radial-gradient(circle at 90% 72%,rgba(249,188,4,.22),transparent 30%),linear-gradient(155deg,#03184f 0%,#012060 58%,#010a2c 100%);border:1px solid rgba(91,216,255,.26)}
+#start::before{content:'＋   ×   ÷   −';position:absolute;top:28px;left:0;right:0;color:rgba(91,216,255,.16);font-size:34px;letter-spacing:26px;pointer-events:none}
+#start>*{position:relative;z-index:1}
+#start .brand-kicker{color:#f9bc04}
+#start .brand-title{color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.24)}
+#start .brand-title span{color:#5bd8ff}
+#start .brand-rule{background:#f9bc04}
+#start .intro,#start>p{color:#fff}
+#start .form-grid{max-width:560px;padding:22px;background:rgba(205,226,247,.94);border:1px solid rgba(91,216,255,.72);border-radius:18px;box-shadow:0 18px 42px rgba(0,0,0,.22)}
+#start .form-grid label,#start .form-grid legend{color:#012060}
+#start .form-grid input,#start .form-grid select{background:#fff7d6;color:#012060;border-color:#f2d477}
+#start .relation-option{background:#fff1b8;border-color:#edcf70}
+#start .small-note{color:#18345f}
+#start>button{box-shadow:0 7px 18px rgba(0,0,0,.22)}
+.identity-status{min-height:22px;margin:10px auto 0;color:#fff;font-size:15px;font-weight:700}
+.identity-dialog{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(1,14,54,.78)}
+.identity-dialog.hidden{display:none}
+.identity-panel{width:min(520px,100%);max-height:90vh;overflow:auto;text-align:left;color:#012060;background:#cde2f7;border:2px solid #5bd8ff;border-radius:18px;padding:22px;box-shadow:0 22px 60px rgba(0,0,0,.42)}
+.identity-panel h2{margin:0 0 10px;text-align:center;color:#012060}
+.identity-panel p{line-height:1.45}
+.identity-candidates{display:grid;gap:9px;margin:16px 0}
+.identity-candidate{display:block;padding:12px;background:#fff7d6;border:1px solid #edcf70;border-radius:10px;cursor:pointer}
+.identity-candidate input{display:inline-block;width:auto;margin:0 8px 0 0}
+.identity-candidate strong{display:block;margin-left:27px}
+.identity-candidate small{display:block;margin:4px 0 0 27px}
+.identity-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.identity-actions .secondary{background:#e8eef7;border:1px solid #8ba5c5}
+@media(max-width:520px){
+ .container{padding:12px}
+ .card{padding:24px 18px}
+ .brand-title{font-size:32px}
+ .brand-title span{font-size:25px}
+ .two-columns{grid-template-columns:1fr}
+ .relation-options{grid-template-columns:repeat(2,1fr)}
+ .relation-option,.relation-option:nth-child(4),.relation-option:nth-child(5){grid-column:span 1}
+ #start .form-grid{padding:16px 12px}
+ .brand-logo-calclandia{width:118px}
+ .brand-title{font-size:29px;white-space:nowrap}
+ .brand-title span{font-size:24px;white-space:normal}
+ .brand-logo-cacho{width:98px;height:auto}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div id="start" class="card">
+<div class="brand-lockup">
+<div class="brand-logo brand-logo-calclandia"><img src="logo_calclandia.jpeg" alt="Logo de CALCLANDIA"></div>
+<div class="brand">
+ <h1 class="brand-title">PRIMERA AVENTURA<span>Tu cerebro en 90 segundos</span></h1>
+ <div class="brand-rule"></div>
+</div>
+<div class="brand-support">
+ <div class="brand-logo brand-logo-cacho"><img src="logo_cacho_aritmetico.png" alt="Logo de Cacho Aritmético"></div>
+</div>
+</div>
+<p class="intro">Identifícate para registrar tu participación en el Centro de Torneos CALCLANDIA.<br>Luego presiona COMENZAR.</p>
+<p>⚡ Puntuación · 🎯 Precisión · 🏆 Nivel alcanzado</p>
+<div class="form-grid">
+<label for="participante">Nombre completo</label>
+<input id="participante" type="text" placeholder="Nombre y apellido" autocomplete="name" required>
+
+<label for="fechaNacimiento">Fecha de nacimiento</label>
+<input id="fechaNacimiento" type="date" required>
+
+<div class="two-columns">
+<div>
+<label for="pais">País</label>
+<input id="pais" type="text" list="paisesLista" value="Bolivia" placeholder="Escribe tu país" autocomplete="country-name" required>
+<datalist id="paisesLista">
+<option value="Bolivia"><option value="Argentina"><option value="Brasil">
+<option value="Chile"><option value="Colombia"><option value="Ecuador">
+<option value="España"><option value="Estados Unidos"><option value="México">
+<option value="Paraguay"><option value="Perú"><option value="Uruguay">
+<option value="Venezuela">
+</datalist>
+</div>
+<div>
+<label for="ciudad">Municipio/Región</label>
+<input id="ciudad" type="text" list="municipiosLista" placeholder="Escribe para buscar" autocomplete="address-level2" required>
+<datalist id="municipiosLista"></datalist>
+</div>
+</div>
+<div class="small-note catalog-note" id="estadoMunicipios">Preparando municipios de Bolivia…</div>
+
+<fieldset style="border:0;padding:0;margin:16px 0 0">
+<legend style="text-align:left;font-weight:700;color:#012060">Relación con el Cacho Aritmético</legend>
+<div class="relation-options">
+<label class="relation-option"><input type="radio" name="relacionCar" value="No lo usa" required><span>No lo usa</span></label>
+<label class="relation-option"><input type="radio" name="relacionCar" value="Usuario nuevo"><span>Usuario nuevo</span></label>
+<label class="relation-option"><input type="radio" name="relacionCar" value="Usuario antiguo"><span>Usuario antiguo</span></label>
+<label class="relation-option"><input type="radio" name="relacionCar" value="Cachódromo Virtual"><span>Cachódromo Virtual</span></label>
+<label class="relation-option"><input type="radio" name="relacionCar" value="Padre/Madre/Familiar"><span>Padre/Madre/Familiar</span></label>
+</div>
+</fieldset>
+
+<div class="small-note" id="datosCalculados">Edad y categoría se calcularán automáticamente.</div>
+<p class="small-note">Tu participación nos ayuda a conocer cómo exploras y entrenas tu cerebro.</p>
+</div>
+<button id="startButton" onclick="startGame()">COMENZAR</button>
+<div id="identityStatus" class="identity-status" aria-live="polite"></div>
+</div>
+
+<div id="identityDialog" class="identity-dialog hidden" role="dialog" aria-modal="true" aria-labelledby="identityTitle">
+ <div class="identity-panel">
+  <h2 id="identityTitle">Verificación de identidad</h2>
+  <div id="identityMessage"></div>
+  <div id="identityCandidates" class="identity-candidates"></div>
+  <div class="identity-actions">
+   <button id="identityConfirmButton" type="button">CONFIRMAR</button>
+   <button id="identityNewButton" type="button" class="secondary hidden">NINGUNA CORRESPONDE</button>
+   <button id="identityCancelButton" type="button" class="secondary">VOLVER</button>
+  </div>
+ </div>
+</div>
+
+<div id="game" class="card hidden">
+<div class="info">⏱️ <span id="timer">90</span></div>
+<div id="operation" class="operation"></div>
+<div class="answer-row">
+ <input id="answer" type="text" inputmode="numeric" pattern="-?[0-9]*" enterkeyhint="done" autocomplete="off" aria-label="Respuesta">
+ <button id="negativeButton" class="sign-button" type="button" onclick="alternarSignoRespuesta_()" aria-label="Añadir o quitar el signo negativo">−</button>
+</div>
+<p class="sign-note">Pulsa − cuando la respuesta sea negativa.</p>
+</div>
+
+<div id="result" class="card hidden">
+<h1>🧠 CALCLANDIA: PRIMERA AVENTURA</h1>
+<p><strong>Tu cerebro en 90 segundos</strong></p>
+<p style="margin-bottom:4px;color:#012060;font-weight:700">Puntuación de esta aventura</p>
+<div class="big" id="score"></div>
+<div class="result">
+🎯 Precisión: <span id="precision"></span><br>
+🚀 Correctas: <span id="correct"></span><br>
+❌ Errores: <span id="errors"></span><br>
+🏆 Nivel máximo: <span id="maxLevel"></span><br>
+📍 Nivel final: <span id="finalLevel"></span><br>
+🔥 Racha máxima: <span id="streak"></span><br>
+</div>
+<div id="recordsBox" class="records-box">
+ <p>⭐ Tu récord personal: <span id="personalRecord">Consultando…</span></p>
+ <p>🏆 Récord vigente en CALCLANDIA: <span id="calclandiaRecord">Consultando…</span></p>
+ <div id="recordHolders" class="record-holders"></div>
+</div>
+<p id="message" style="font-size:24px;font-weight:700;color:#012060;"></p>
+<div class="mensaje-final">Si quieres mejorar tu Cerebro, juega CACHO ARITMÉTICO</div>
+<div id="mistakesBox" class="mistakes hidden">
+<h3>📋 Repaso de tus errores</h3>
+<div id="mistakesList"></div>
+</div>
+<div id="saveStatus">Registrando resultado...</div>
+<button id="shareButton" onclick="shareResult()" disabled>ESPERA: REGISTRANDO RESULTADO…</button>
+<div class="community-box">
+ <h2>Comunidad CALCLANDIA</h2>
+ <p>Recibe resúmenes, novedades e invitaciones a próximos torneos.</p>
+ <p class="guardian-note">Si eres menor de edad, pide a tu madre, padre o tutor que realice el contacto.</p>
+ <a id="communityLink" class="community-button" href="https://wa.me/59171182342" target="_blank" rel="noopener noreferrer">QUIERO SUMARME POR WHATSAPP</a>
+</div>
+<br><br>
+<button onclick="location.reload()">JUGAR DE NUEVO</button>
+</div>
+</div>
+
+<script>
+let timeLeft=90,timer;
+let level=1,maxLevel=1;
+let correct=0,errors=0;
+let streak=0,maxStreak=0;
+let upCount=0,downCount=0;
+let currentAnswer=0,currentExpr="";
+let mistakes=[];
+let playerData={};
+let gameStartTime=null;
+let resultAlreadySent=false;
+let identityCheckInProgress=false;
+const URL_APPS_SCRIPT='https://script.google.com/macros/s/AKfycbyZ_cRgEZ9i5kV05n6rR7nKz1p6C7EFF9TeWORBbm0x0CIXaC8eIy2C8dHddhGjILnYyg/exec';
+const URL_MUNICIPIOS_BOLIVIA='https://lab-tecnosocial.github.io/municipios-bolivia-2024/municipios_bolivia_2024.csv';
+const MUNICIPIOS_RESPALDO=[
+ 'Sucre','Camargo','Cochabamba','Quillacollo','La Paz','El Alto',
+ 'Oruro','Challapata','Huanuni','Potosí','Tarija','Santa Cruz de la Sierra',
+ 'San Cristóbal'
+];
+let municipiosBoliviaValidos=[];
+let catalogoMunicipiosCompleto=false;
+
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+function actualizarBotonSigno_(){
+ const respuesta=document.getElementById('answer');
+ const boton=document.getElementById('negativeButton');
+ boton.classList.toggle('active',respuesta.value.trim().startsWith('-'));
+}
+
+function alternarSignoRespuesta_(){
+ const respuesta=document.getElementById('answer');
+ const valor=respuesta.value.trim();
+ respuesta.value=valor.startsWith('-')
+   ? valor.slice(1)
+   : '-'+valor;
+ actualizarBotonSigno_();
+ respuesta.focus();
+ const final=respuesta.value.length;
+ try{respuesta.setSelectionRange(final,final);}catch(e){}
+}
+
+function validarNombreCompleto(nombre){
+ return nombre.trim().split(/\s+/).length>=2;
+}
+
+function calcularEdad(fechaNacimiento){
+ if(!fechaNacimiento) return '';
+ const hoy=new Date();
+ const nac=new Date(fechaNacimiento+'T00:00:00');
+ if(isNaN(nac.getTime()) || nac>hoy) return '';
+ let edad=hoy.getFullYear()-nac.getFullYear();
+ const m=hoy.getMonth()-nac.getMonth();
+ if(m<0 || (m===0 && hoy.getDate()<nac.getDate())) edad--;
+ return edad;
+}
+
+function limpiarTextoId(txt){
+ return (txt||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9]/g,'').toUpperCase();
+}
+
+function generarIdCTC(nombre, fechaNacimiento, ciudad){
+ const iniciales=nombre.trim().split(/\s+/).map(p=>p[0]||'').join('').slice(0,4).toUpperCase();
+ const fecha=(fechaNacimiento||'').replace(/-/g,'');
+ const ciudadCod=limpiarTextoId(ciudad).slice(0,3);
+ return `CTC-${ciudadCod}-${fecha}-${iniciales}`;
+}
+
+function actualizarDatosCalculados(){
+ const fecha=document.getElementById("fechaNacimiento").value;
+ const edad=calcularEdad(fecha);
+ const categoria=categoriaPorEdadLocal(edad);
+ const el=document.getElementById("datosCalculados");
+ if(edad){ el.innerText=`Edad: ${edad} años · Categoría: ${categoria}`; }
+ else{ el.innerText="Edad y categoría se calcularán automáticamente."; }
+}
+
+function mostrarMunicipios_(nombres){
+ const lista=document.getElementById('municipiosLista');
+ const unicos=[...new Set(nombres.concat('San Cristóbal'))]
+   .filter(Boolean)
+   .sort(function(a,b){return a.localeCompare(b,'es');});
+ municipiosBoliviaValidos=unicos;
+ lista.innerHTML=unicos.map(function(nombre){
+   const opcion=document.createElement('option');
+   opcion.value=nombre;
+   return opcion.outerHTML;
+ }).join('');
+ return unicos.length;
+}
+
+async function cargarMunicipiosBolivia_(){
+ const estado=document.getElementById('estadoMunicipios');
+ mostrarMunicipios_(MUNICIPIOS_RESPALDO);
+ try{
+   const respuesta=await fetch(URL_MUNICIPIOS_BOLIVIA,{cache:'force-cache'});
+   if(!respuesta.ok) throw new Error('Catálogo no disponible');
+   const texto=await respuesta.text();
+   const lineas=texto.trim().split(/\r?\n/).slice(1);
+   const nombres=lineas.map(function(linea){
+     const columnas=[];
+     let valor='',comillas=false;
+     for(let i=0;i<linea.length;i++){
+       const caracter=linea[i];
+       if(caracter==='"' && linea[i+1]==='"'){
+         valor+='"'; i++;
+       }else if(caracter==='"'){
+         comillas=!comillas;
+       }else if(caracter===',' && !comillas){
+         columnas.push(valor); valor='';
+       }else{
+         valor+=caracter;
+       }
+     }
+     columnas.push(valor);
+     return columnas[6]||'';
+   });
+   mostrarMunicipios_(nombres);
+   catalogoMunicipiosCompleto=true;
+   estado.innerText='';
+ }catch(error){
+   estado.innerText='Puedes escribir libremente tu municipio o región.';
+ }
+}
+
+async function startGame(){
+ const participante=document.getElementById("participante").value.trim();
+ const fecha_nacimiento=document.getElementById("fechaNacimiento").value;
+ const pais=document.getElementById("pais").value.trim();
+ let ciudad=document.getElementById("ciudad").value.trim();
+ const relacionSeleccionada=document.querySelector('input[name="relacionCar"]:checked');
+ const relacion_car=relacionSeleccionada ? relacionSeleccionada.value : '';
+ const edad=calcularEdad(fecha_nacimiento);
+ const categoria=categoriaPorEdadLocal(edad);
+ if(!validarNombreCompleto(participante)){
+   alert("Por favor registra nombre completo: nombre y apellido.");
+   return;
+ }
+ if(!fecha_nacimiento || !edad){
+   alert("Por favor registra una fecha de nacimiento válida.");
+   return;
+ }
+ if(!pais || !ciudad || !relacion_car){
+   alert("Por favor completa país, municipio/región y relación con el Cacho Aritmético.");
+   return;
+ }
+ if(pais.localeCompare('Bolivia','es',{sensitivity:'base'})===0 && catalogoMunicipiosCompleto){
+   const municipioOficial=municipiosBoliviaValidos.find(function(nombre){
+     return nombre.localeCompare(ciudad,'es',{sensitivity:'base'})===0;
+   });
+   if(!municipioOficial){
+     alert('Para Bolivia, selecciona un municipio o región de la lista. San Cristóbal está incluido.');
+     return;
+   }
+   ciudad=municipioOficial;
+   document.getElementById('ciudad').value=municipioOficial;
+ }
+ const datosProvisionales={
+   participante,
+   fecha_nacimiento,
+   pais,
+   ciudad,
+   edad,
+   categoria,
+   id_carv:'',
+   id_ctc:generarIdCTC(participante, fecha_nacimiento, ciudad),
+   relacion_car
+ };
+ const boton=document.getElementById('startButton');
+ const estadoIdentidad=document.getElementById('identityStatus');
+ if(identityCheckInProgress) return;
+ identityCheckInProgress=true;
+ boton.disabled=true;
+ boton.innerText='VERIFICANDO…';
+ estadoIdentidad.innerText='Comprobando tu identidad de forma segura…';
+ try{
+   const decision=await verificarIdentidadAntesDeComenzar_(datosProvisionales);
+   if(!decision){
+     estadoIdentidad.innerText='Revisa o corrige tus datos antes de comenzar.';
+     return;
+   }
+   playerData=Object.assign({},datosProvisionales,decision);
+ }catch(error){
+   console.error(error);
+   estadoIdentidad.innerText='No fue posible verificar la identidad. Inténtalo nuevamente.';
+   alert('No fue posible verificar tu identidad. No se registró nada. Revisa tu conexión e inténtalo nuevamente.');
+   return;
+ }finally{
+   identityCheckInProgress=false;
+   boton.disabled=false;
+   boton.innerText='COMENZAR';
+ }
+ estadoIdentidad.innerText='';
+ localStorage.setItem("ctcPlayerData90", JSON.stringify(playerData));
+ gameStartTime=Date.now();
+ document.getElementById("start").classList.add("hidden");
+ document.getElementById("game").classList.remove("hidden");
+ generateQuestion();
+ document.getElementById("answer").focus();
+
+ timer=setInterval(()=>{
+  timeLeft--;
+  document.getElementById("timer").innerText=timeLeft;
+  if(timeLeft<=0) endGame();
+ },1000);
+}
+
+async function consultarIdentidadPrevia_(datos){
+ const respuestaHttp=await fetch(URL_APPS_SCRIPT,{
+   method:'POST',
+   headers:{'Content-Type':'text/plain;charset=utf-8'},
+   body:JSON.stringify({
+     accion:'VERIFICAR_IDENTIDAD',
+     participante:datos.participante,
+     fecha_nacimiento:datos.fecha_nacimiento,
+     pais:datos.pais,
+     municipio_region:datos.ciudad
+   })
+ });
+ const texto=await respuestaHttp.text();
+ let respuesta;
+ try{respuesta=JSON.parse(texto);}catch(e){
+   throw new Error('El servicio no devolvió una respuesta válida.');
+ }
+ if(!respuestaHttp.ok || !respuesta.ok){
+   throw new Error(respuesta.mensaje||'La verificación fue rechazada.');
+ }
+ return respuesta;
+}
+
+function solicitarDecisionIdentidad_(respuesta){
+ return new Promise(function(resolve){
+   const dialogo=document.getElementById('identityDialog');
+   const mensaje=document.getElementById('identityMessage');
+   const contenedor=document.getElementById('identityCandidates');
+   const confirmar=document.getElementById('identityConfirmButton');
+   const nueva=document.getElementById('identityNewButton');
+   const volver=document.getElementById('identityCancelButton');
+   const candidatos=respuesta.codigo==='IDENTIDAD_ENCONTRADA'
+     ? [respuesta.candidato]
+     : (Array.isArray(respuesta.candidatos)?respuesta.candidatos:[]);
+   mensaje.innerHTML=respuesta.codigo==='IDENTIDAD_ENCONTRADA'
+     ? '<p>Encontramos esta identidad. Confirma que eres tú antes de comenzar.</p>'
+     : '<p>Encontramos identidades relacionadas. Selecciona la tuya. Si ninguna corresponde, podrás indicarlo expresamente.</p>';
+   contenedor.innerHTML='';
+   candidatos.forEach(function(candidato,indice){
+     const etiqueta=document.createElement('label');
+     etiqueta.className='identity-candidate';
+     const ubicacion=[candidato.municipio,candidato.pais].filter(Boolean).join(' · ');
+     etiqueta.innerHTML='<input type="radio" name="identityCandidate" value="'+indice+'">'+
+       '<strong></strong><small></small>';
+     etiqueta.querySelector('strong').textContent=candidato.nombre||'Identidad registrada';
+     etiqueta.querySelector('small').textContent=[ubicacion,candidato.idCtc].filter(Boolean).join(' · ');
+     contenedor.appendChild(etiqueta);
+   });
+   if(candidatos.length===1){
+     contenedor.querySelector('input').checked=true;
+   }
+   nueva.classList.toggle('hidden',respuesta.codigo==='IDENTIDAD_ENCONTRADA');
+   dialogo.classList.remove('hidden');
+   function cerrar(valor){
+     dialogo.classList.add('hidden');
+     confirmar.onclick=null;nueva.onclick=null;volver.onclick=null;
+     resolve(valor);
+   }
+   confirmar.onclick=function(){
+     const elegida=contenedor.querySelector('input[name="identityCandidate"]:checked');
+     if(!elegida){alert('Selecciona una identidad o vuelve para revisar tus datos.');return;}
+     cerrar({id_ctc_confirmado:candidatos[Number(elegida.value)].idCtc});
+   };
+   nueva.onclick=function(){
+     if(window.confirm('¿Confirmas que ninguna identidad corresponde y que se trata de una persona diferente?')){
+       cerrar({confirmar_nueva_identidad:true});
+     }
+   };
+   volver.onclick=function(){cerrar(null);};
+ });
+}
+
+async function verificarIdentidadAntesDeComenzar_(datos){
+ const respuesta=await consultarIdentidadPrevia_(datos);
+ if(respuesta.codigo==='IDENTIDAD_NUEVA') return {};
+ if(
+   respuesta.codigo==='IDENTIDAD_ENCONTRADA' ||
+   respuesta.codigo==='IDENTIDAD_RELACIONADA' ||
+   respuesta.codigo==='IDENTIDAD_AMBIGUA'
+ ){
+   return solicitarDecisionIdentidad_(respuesta);
+ }
+ throw new Error('Respuesta de identidad no reconocida: '+respuesta.codigo);
+}
+
+function generateQuestion(){
+ let t="";
+ switch(level){
+ case 1:{
+  let a=rand(1,10),b=rand(1,10);
+  if(Math.random()<0.5){t=`${a}+${b}`;currentAnswer=a+b;}
+  else{if(a<b)[a,b]=[b,a];t=`${a}-${b}`;currentAnswer=a-b;}
+ }break;
+ case 2:{
+  let a=rand(10,50),b=rand(10,50);
+  if(Math.random()<0.5){t=`${a}+${b}`;currentAnswer=a+b;}
+  else{if(a<b)[a,b]=[b,a];t=`${a}-${b}`;currentAnswer=a-b;}
+ }break;
+ case 3:{
+  let a=rand(2,9),b=rand(2,9);t=`${a}×${b}`;currentAnswer=a*b;
+ }break;
+ case 4:{
+  if(Math.random()<0.5){let a=rand(2,9),b=rand(2,9);t=`${a}×${b}`;currentAnswer=a*b;}
+  else{let b=rand(2,9),c=rand(2,9),a=b*c;t=`${a}÷${b}`;currentAnswer=c;}
+ }break;
+ case 5:{
+  let a=rand(2,9),b=rand(2,9),c=rand(1,20);
+  if(Math.random()<0.5){t=`(${a}×${b})+${c}`;currentAnswer=a*b+c;}
+  else{t=`(${a}×${b})-${c}`;currentAnswer=a*b-c;}
+ }break;
+ case 6:{
+  let a=rand(2,9),b=rand(2,9),c=rand(2,9);
+  t=`(${a*b}÷${a})×${c}`;currentAnswer=b*c;
+ }break;
+ case 7:{
+  let ops=[
+   ()=>{let b=rand(4,9),c=rand(4,9),p=b*c,a=p+rand(2,20),d=rand(1,20);
+        return [`${a}-(${b}×${c})+${d}`,a-p+d];},
+   ()=>{let b=rand(3,9),c=rand(3,9),p=b*c,a=rand(10,40),d=rand(1,p);
+        return [`${a}+(${b}×${c})-${d}`,a+p-d];},
+   ()=>{let b=rand(3,9),q=rand(3,9),a=b*q,c=rand(2,7),p=q*c,d=rand(1,p-1);
+        return [`(${a}÷${b})×${c}-${d}`,p-d];},
+   ()=>{let c=rand(3,9),q=rand(2,9),b=c*q,a=rand(10,40),d=rand(1,a+q-1);
+        return [`${a}+(${b}÷${c})-${d}`,a+q-d];},
+   ()=>{let c=rand(3,9),q=rand(2,9),b=c*q,a=rand(q+1,60),d=rand(1,20);
+        return [`${a}-(${b}÷${c})+${d}`,a-q+d];}
+  ];
+  let q=ops[rand(0,ops.length-1)]();
+  t=q[0]; currentAnswer=q[1];
+ }break;
+ }
+ currentExpr=t;
+ document.getElementById("operation").innerHTML=t+" = ?";
+ document.getElementById("answer").value="";
+ actualizarBotonSigno_();
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+ cargarMunicipiosBolivia_();
+ try{
+   const saved=JSON.parse(localStorage.getItem("ctcPlayerData90")||"{}");
+   if(saved.participante) document.getElementById("participante").value=saved.participante;
+   if(saved.fecha_nacimiento) document.getElementById("fechaNacimiento").value=saved.fecha_nacimiento;
+   if(saved.pais) document.getElementById("pais").value=saved.pais;
+   if(saved.ciudad) document.getElementById("ciudad").value=saved.ciudad;
+   if(saved.relacion_car){
+     const relaciones=document.querySelectorAll('input[name="relacionCar"]');
+     relaciones.forEach(function(opcion){
+       opcion.checked=opcion.value===saved.relacion_car;
+     });
+   }
+   actualizarDatosCalculados();
+ }catch(e){}
+ document.getElementById("fechaNacimiento").addEventListener("change",actualizarDatosCalculados);
+ document.getElementById("fechaNacimiento").addEventListener("input",actualizarDatosCalculados);
+ document.getElementById("answer").addEventListener("input",function(e){
+  let valor=e.target.value.replace(/[^0-9-]/g,'');
+  const negativo=valor.indexOf('-')!==-1;
+  valor=valor.replace(/-/g,'');
+  e.target.value=(negativo?'-':'')+valor;
+  actualizarBotonSigno_();
+ });
+ document.getElementById("answer").addEventListener("keydown",e=>{
+  if(e.key==="Enter"){
+   let v=parseInt(e.target.value);
+   if(v===currentAnswer){
+    correct++; streak++; if(streak>maxStreak) maxStreak=streak;
+    upCount++; downCount=0;
+    if(upCount>=3){ if(level<7){level++; if(level>maxLevel) maxLevel=level;} upCount=0; }
+   }else{
+    errors++; streak=0;
+    let yourAns=e.target.value.trim();
+    mistakes.push({expr:currentExpr,your:yourAns===""?"—":yourAns,correct:currentAnswer});
+    downCount++; upCount=0;
+    if(downCount>=2){ if(level>1) level--; downCount=0; }
+   }
+   generateQuestion();
+  }
+ });
+});
+
+function factor(p){
+ if(p>=95) return 1;
+ if(p>=90) return .95;
+ if(p>=85) return .9;
+ if(p>=80) return .8;
+ if(p>=75) return .65;
+ if(p>=70) return .5;
+ return .25;
+}
+
+function crearIdPartida(){
+ if(window.crypto && crypto.randomUUID) return crypto.randomUUID();
+ return 'partida-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+}
+
+function categoriaPorEdadLocal(edad){
+ if(edad==='' || edad===null || edad===undefined) return '';
+ if(edad<=12) return 'Niño';
+ if(edad<=17) return 'Adolescente';
+ if(edad<=28) return 'Joven';
+ if(edad<=59) return 'Adulto';
+ return 'Adulto Mayor';
+}
+
+function getDispositivo(){
+ return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent) ? 'MÓVIL' : 'PC';
+}
+
+async function enviarResultadoAutomatico(resultado) {
+  const payload = {
+    id_partida: crearIdPartida(),
+    participante: playerData.participante || '',
+    pais: playerData.pais || 'Bolivia',
+    ciudad: playerData.ciudad || '',
+    fecha_nacimiento:
+      playerData.fecha_nacimiento || '',
+    edad: playerData.edad || '',
+    categoria:
+      playerData.categoria ||
+      categoriaPorEdadLocal(playerData.edad),
+    id_carv: playerData.id_carv || '',
+    id_ctc: playerData.id_ctc || '',
+    id_ctc_confirmado:
+      playerData.id_ctc_confirmado || '',
+    confirmar_nueva_identidad:
+      playerData.confirmar_nueva_identidad === true,
+    relacion_car: playerData.relacion_car || '',
+    puntuacion: resultado.puntuacion,
+    precision: resultado.precision,
+    correctas: resultado.correctas,
+    errores: resultado.errores,
+    nivel_maximo: resultado.nivel_maximo,
+    nivel_final: resultado.nivel_final,
+    racha_maxima: resultado.racha_maxima,
+    mejor_puntuacion_sesion:
+      resultado.mejor_puntuacion_sesion,
+    observaciones: mistakes.length
+      ? 'Errores: ' +
+        mistakes
+          .map(
+            m =>
+              `${m.expr} | Tu: ${m.your} | OK: ${m.correct}`
+          )
+          .join(' ; ')
+      : '',
+    otros: '',
+    dispositivo: getDispositivo(),
+    navegador: navigator.userAgent,
+    duracion_real: gameStartTime
+      ? Math.round(
+          (Date.now() - gameStartTime) / 1000
+        ) + ' s'
+      : '90 s',
+    origen: 'JUEGO GITHUB'
+  };
+
+  function guardarPendiente() {
+    try {
+      sessionStorage.setItem(
+        'ctc_resultado_pendiente',
+        JSON.stringify(payload)
+      );
+    } catch (e) {}
+  }
+
+  function eliminarPendiente() {
+    try {
+      sessionStorage.removeItem(
+        'ctc_resultado_pendiente'
+      );
+    } catch (e) {}
+  }
+
+  async function enviarPayload() {
+    const respuestaHttp = await fetch(
+      URL_APPS_SCRIPT,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type':
+            'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify(payload)
+      }
+    );
+
+    const texto = await respuestaHttp.text();
+    let respuesta;
+
+    try {
+      respuesta = JSON.parse(texto);
+    } catch (e) {
+      throw new Error(
+        'Apps Script no devolvió una respuesta válida.'
+      );
+    }
+
+    if (!respuestaHttp.ok) {
+      throw new Error(
+        respuesta.mensaje ||
+        'Apps Script rechazó la solicitud.'
+      );
+    }
+
+    return respuesta;
+  }
+
+  guardarPendiente();
+
+  let respuesta = await enviarPayload();
+
+  if (
+    respuesta.codigo ===
+    'IDENTIDAD_REQUIERE_CONFIRMACION'
+  ) {
+    const candidatos = Array.isArray(
+      respuesta.candidatos
+    )
+      ? respuesta.candidatos
+      : [];
+
+    const lista = candidatos
+      .map(function(candidato, indice) {
+        return (
+          (indice + 1) + '. ' +
+          candidato.nombre +
+          ' | ' +
+          candidato.fechaNacimiento +
+          ' | ' +
+          candidato.municipio +
+          ' | ' +
+          candidato.idCtc
+        );
+      })
+      .join('\n');
+
+    const eleccion = window.prompt(
+      'Encontramos identidades relacionadas, ' +
+      'pero los datos son diferentes.\n\n' +
+      lista +
+      '\n\nEscribe el número de la identidad correcta.' +
+      '\nEscribe N solamente si realmente es otra persona.' +
+      '\nPulsa Cancelar para no registrar todavía.'
+    );
+
+    if (eleccion === null) {
+      throw new Error(
+        'Registro pendiente: no se confirmó la identidad.'
+      );
+    }
+
+    const opcion = eleccion.trim().toUpperCase();
+
+    if (opcion === 'N') {
+      const confirmacion = window.confirm(
+        '¿Confirma que se trata realmente de otra persona?' +
+        '\n\nSe creará un nuevo ID CTC.'
+      );
+
+      if (!confirmacion) {
+        throw new Error(
+          'Registro pendiente: no se confirmó una identidad nueva.'
+        );
+      }
+
+      payload.confirmar_nueva_identidad = true;
+      delete payload.id_ctc_confirmado;
+    } else {
+      const indiceElegido = Number(opcion) - 1;
+
+      if (
+        !Number.isInteger(indiceElegido) ||
+        indiceElegido < 0 ||
+        indiceElegido >= candidatos.length
+      ) {
+        throw new Error(
+          'Registro pendiente: la opción seleccionada no es válida.'
+        );
+      }
+
+      payload.id_ctc_confirmado =
+        candidatos[indiceElegido].idCtc;
+
+      delete payload.confirmar_nueva_identidad;
+    }
+
+    guardarPendiente();
+    respuesta = await enviarPayload();
+  }
+
+  if (!respuesta.ok) {
+    throw new Error(
+      respuesta.mensaje ||
+      'El resultado no fue registrado.'
+    );
+  }
+
+  if (respuesta.id_ctc) {
+    playerData.id_ctc = respuesta.id_ctc;
+  }
+
+  eliminarPendiente();
+
+  return respuesta;
+}
+ 
+function endGame(){
+ clearInterval(timer);
+ document.getElementById("game").classList.add("hidden");
+ document.getElementById("result").classList.remove("hidden");
+ prepararEnlaceComunidad_();
+
+ const botonCompartir=document.getElementById('shareButton');
+ botonCompartir.disabled=true;
+ botonCompartir.innerText='ESPERA: REGISTRANDO RESULTADO…';
+
+ let total=correct+errors;
+ let p=total?correct/total*100:0;
+
+ let V=Math.min(correct*3,100);
+ let N=[0,10,20,35,50,65,82,100][maxLevel];
+ let score=Math.round((0.7*V+0.3*N)*factor(p));
+
+document.getElementById("score").innerText=score;
+ document.getElementById("precision").innerText=p.toFixed(1)+"%";
+ document.getElementById("correct").innerText=correct;
+ document.getElementById("errors").innerText=errors;
+ document.getElementById("maxLevel").innerText=maxLevel;
+ document.getElementById("finalLevel").innerText=level;
+ document.getElementById("streak").innerText=maxStreak;
+ document.getElementById("personalRecord").innerText='Consultando…';
+ document.getElementById("calclandiaRecord").innerText='Consultando…';
+ document.getElementById("recordHolders").innerText='';
+
+ let msg="";
+ if(score<50) msg="Has comenzado el viaje.";
+ if(score>=50) msg="Buena combinación de rapidez y precisión.";
+ if(score>=70) msg="Excelente rendimiento mental bajo presión.";
+ if(score>=85) msg="¡Eres una máquina! Dominas los números como pocos.";
+ document.getElementById("message").innerText=msg;
+
+ let box=document.getElementById("mistakesBox");
+ let listEl=document.getElementById("mistakesList");
+ if(mistakes.length){
+   listEl.innerHTML=mistakes.map(m=>
+     `<div class="miss-item"><span class="miss-expr">${m.expr} = ?</span>`+
+     `<span><span class="miss-your">Tu: ${m.your}</span> · <span class="miss-ok">OK: ${m.correct}</span></span></div>`
+   ).join("");
+   box.classList.remove("hidden");
+ }else{
+   box.classList.add("hidden");
+ }
+
+ if (!resultAlreadySent) {
+  resultAlreadySent = true;
+
+  const resultado = {
+    puntuacion: score,
+    precision: p.toFixed(1) + '%',
+    correctas: correct,
+    errores: errors,
+    nivel_maximo: maxLevel,
+    nivel_final: level,
+    racha_maxima: maxStreak,
+    mejor_puntuacion_sesion: score
+  };
+
+  const estadoGuardado =
+    document.getElementById('saveStatus');
+
+  estadoGuardado.innerText =
+    '⏳ Registrando resultado...';
+
+  enviarResultadoAutomatico(resultado)
+    .then(function(respuesta) {
+      mostrarRecordsOficiales_(respuesta);
+      estadoGuardado.innerText =
+        '✅ Resultado registrado automáticamente.';
+      botonCompartir.disabled = false;
+      botonCompartir.innerText =
+        'COMPARTIR E INVITAR A JUGAR';
+    })
+    .catch(function(error) {
+      resultAlreadySent = false;
+
+      document.getElementById('personalRecord').innerText =
+        'No disponible';
+      document.getElementById('calclandiaRecord').innerText =
+        'No disponible';
+
+      estadoGuardado.innerText =
+        '⚠️ ' +
+        (error.message ||
+          'No se pudo registrar automáticamente.') +
+        ' Usa COMPARTIR RESULTADO como respaldo.';
+
+      botonCompartir.disabled = false;
+      botonCompartir.innerText =
+        'COMPARTIR E INVITAR A JUGAR';
+
+      console.error(
+        'Error al registrar el resultado:',
+        error
+      );
+    });
+}
+}
+
+function prepararEnlaceComunidad_(){
+ const nombre=(playerData.participante||'').trim();
+ const mensaje='Hola. Deseo recibir información para sumarme a la Comunidad CALCLANDIA.'+
+   (nombre ? '\nParticipante: '+nombre : '');
+ document.getElementById('communityLink').href=
+   'https://wa.me/59171182342?text='+encodeURIComponent(mensaje);
+}
+
+function mostrarRecordsOficiales_(respuesta){
+ const recordPersonal=Number(respuesta.record_personal||0);
+ const recordCalclandia=respuesta.record_calclandia||{};
+ const puntuacionGeneral=Number(recordCalclandia.puntuacion||0);
+ const lideres=Array.isArray(recordCalclandia.lideres)
+   ? recordCalclandia.lideres
+   : [];
+ document.getElementById('personalRecord').innerText=
+   recordPersonal>0 ? recordPersonal : 'Sin registro';
+ document.getElementById('calclandiaRecord').innerText=
+   puntuacionGeneral>0 ? puntuacionGeneral : 'Sin registro';
+ const contenedor=document.getElementById('recordHolders');
+ contenedor.innerHTML='';
+ if(lideres.length>1){
+   const aviso=document.createElement('div');
+   aviso.textContent='Récord compartido por:';
+   aviso.style.marginBottom='7px';
+   contenedor.appendChild(aviso);
+ }
+ lideres.forEach(function(lider){
+   const linea=document.createElement('div');
+   const detalle=[lider.categoria,lider.municipio]
+     .filter(Boolean)
+     .join(' · ');
+   const nombre=document.createElement('strong');
+   nombre.textContent=lider.nombre||'';
+   linea.appendChild(nombre);
+   if(detalle){
+     linea.appendChild(document.createElement('br'));
+     linea.appendChild(document.createTextNode(detalle));
+   }
+   contenedor.appendChild(linea);
+ });
+}
+
+async function shareResult(){
+ const urlJuego='https://esiev2007-ctrl.github.io/explora-tu-cerebro/';
+ let txt=`🧠 CALCLANDIA: PRIMERA AVENTURA
+Tu cerebro en 90 segundos
+
+⚡ Puntuación: ${document.getElementById("score").innerText}
+🎯 Precisión: ${document.getElementById("precision").innerText}
+🚀 Correctas: ${correct}
+❌ Errores: ${errors}
+🏆 Nivel máximo: ${maxLevel}
+📍 Nivel final: ${level}
+🔥 Racha máxima: ${maxStreak}`;
+
+ const recordPersonal=document.getElementById('personalRecord').innerText;
+ const recordCalclandia=document.getElementById('calclandiaRecord').innerText;
+ if(recordPersonal && recordPersonal!=='Consultando…'){
+   txt+=`\n⭐ Tu récord personal: ${recordPersonal}`;
+ }
+ if(recordCalclandia && recordCalclandia!=='Consultando…'){
+   txt+=`\n🏆 Récord vigente en CALCLANDIA: ${recordCalclandia}`;
+ }
+
+ if(mistakes.length){
+   txt+=`\n\n📋 Repaso de errores:`;
+   mistakes.forEach(m=>{ txt+=`\n• ${m.expr} = ?  (Tu: ${m.your} · OK: ${m.correct})`; });
+ }
+
+ txt+=`\n\nSi quieres mejorar tu Cerebro, juega CACHO ARITMÉTICO`;
+ txt+=`\n\n🎯 ¿Puedes superar mi puntuación?`;
+ txt+=`\nJuega aquí:`;
+
+ const textoCompleto=txt+'\n'+urlJuego;
+
+ if(navigator.share){
+   try{
+     await navigator.share({
+       title:'CALCLANDIA: Primera Aventura',
+       text:txt,
+       url:urlJuego
+     });
+     return;
+   }catch(error){
+     if(error && error.name==='AbortError') return;
+   }
+ }
+
+ if(navigator.clipboard){
+   try{
+     await navigator.clipboard.writeText(textoCompleto);
+     alert('Resultado e invitación copiados. Ya puedes compartirlos.');
+     return;
+   }catch(error){}
+ }
+
+ prompt('Copia tu resultado y la invitación:',textoCompleto);
+}
+</script>
+</body>
+</html>
