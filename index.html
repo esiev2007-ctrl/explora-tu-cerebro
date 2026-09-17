@@ -192,6 +192,41 @@ input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding
 
 </div>
 <!-- ===== FIN PARTICIPANTE QUE REGRESA ===== -->
+ <!-- ===== CALCLANDIA · PARTICIPANTE ENCONTRADO ===== -->
+<div id="recognizedPlayerScreen" class="card hidden">
+
+  <div class="brand-logo brand-logo-calclandia">
+    <img src="logo_calclandia.jpeg" alt="Logo de CALCLANDIA">
+  </div>
+
+  <h1 id="recognizedGreeting">¡Hola!</h1>
+
+  <p style="font-size:21px;color:#012060">
+    <strong>¡Claro que te recordamos!</strong>
+  </p>
+
+  <div class="records-box">
+    <p>🏆 Tu mayor puntuación: <strong id="recognizedBestScore">—</strong></p>
+    <p>🎯 Tu mejor precisión: <strong id="recognizedBestPrecision">—</strong></p>
+    <p>🎲 Has jugado <strong id="recognizedGamesPlayed">—</strong> partidas</p>
+  </div>
+
+  <p style="font-size:20px;line-height:1.5;color:#012060">
+    La que estás por comenzar será<br>
+    <strong>tu partida N.º <span id="recognizedNextGame">—</span></strong>
+  </p>
+
+  <h2 style="margin:26px 0 14px;color:#012060">
+    ¿Eres tú?
+  </h2>
+
+  <div style="display:flex;justify-content:center;gap:18px;flex-wrap:wrap">
+    <button id="recognizedYesButton" type="button">SÍ</button>
+    <button id="recognizedNoButton" type="button">NO</button>
+  </div>
+
+</div>
+<!-- ===== FIN PARTICIPANTE ENCONTRADO ===== -->
 <div id="start" class="card">
 <div class="brand-lockup">
 <div class="brand-logo brand-logo-calclandia"><img src="logo_calclandia.jpeg" alt="Logo de CALCLANDIA"></div>
