@@ -331,7 +331,16 @@ const MUNICIPIOS_RESPALDO=[
 ];
 let municipiosBoliviaValidos=[];
 let catalogoMunicipiosCompleto=false;
+// ===== CALCLANDIA: NAVEGACIÓN PUERTA DE ENTRADA =====
+const welcomeCalclandia = document.getElementById('welcomeCalclandia');
+const returningPlayerScreen = document.getElementById('returningPlayerScreen');
+const returningPlayerButton = document.getElementById('returningPlayerButton');
 
+returningPlayerButton.addEventListener('click', function () {
+  welcomeCalclandia.classList.add('hidden');
+  returningPlayerScreen.classList.remove('hidden');
+});
+// ===== FIN NAVEGACIÓN PUERTA DE ENTRADA =====
 function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 
 function actualizarBotonSigno_(){
