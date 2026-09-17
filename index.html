@@ -548,7 +548,31 @@ async function consultarIdentidadPrevia_(datos){
  }
  return respuesta;
 }
+async function buscarPorClaveCalclandia_(clave){
+  const respuestaHttp = await fetch(URL_APPS_SCRIPT,{
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({
+      accion:'BUSCAR_CLAVE_CALCLANDIA',
+      clave_calclandia:clave
+    })
+  });
 
+  const texto = await respuestaHttp.text();
+  let respuesta;
+
+  try{
+    respuesta = JSON.parse(texto);
+  }catch(e){
+    throw new Error('El servidor no devolvió una respuesta válida.');
+  }
+
+  if(!respuestaHttp.ok || !respuesta.ok){
+    throw new Error(respuesta.mensaje || 'No fue posible buscar tu Clave CALCLANDIA.');
+  }
+
+  return respuesta;
+}
 function solicitarDecisionIdentidad_(respuesta){
  return new Promise(function(resolve){
    const dialogo=document.getElementById('identityDialog');
