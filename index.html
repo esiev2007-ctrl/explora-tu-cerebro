@@ -375,6 +375,74 @@ returningPlayerButton.addEventListener('click', function () {
   welcomeCalclandia.classList.add('hidden');
   returningPlayerScreen.classList.remove('hidden');
 });
+ const findByKeyButton = document.getElementById('findByKeyButton');
+const claveCalclandiaInput = document.getElementById('claveCalclandia');
+
+findByKeyButton.addEventListener('click', async function () {
+  const clave = claveCalclandiaInput.value.trim();
+
+  if (!clave) {
+    alert('Escribe tu Clave CALCLANDIA.');
+    claveCalclandiaInput.focus();
+    return;
+  }
+
+  findByKeyButton.disabled = true;
+  findByKeyButton.textContent = 'BUSCANDO...';
+
+  try {
+    const respuesta = await buscarPorClaveCalclandia_(clave);
+
+    if (
+      respuesta &&
+      respuesta.ok === true &&
+      respuesta.encontrado === true &&
+      respuesta.participante
+    ) {
+      const persona = respuesta.participante;
+
+      document.getElementById('recognizedGreeting').textContent =
+        '¡Hola, ' + (persona.participante || '') + '!';
+
+      document.getElementById('recognizedBestScore').textContent =
+        persona.mejorPuntuacion ?? '—';
+
+      const precision = Number(persona.mejorPrecision);
+      document.getElementById('recognizedBestPrecision').textContent =
+        Number.isFinite(precision)
+          ? (precision <= 1 ? (precision * 100).toFixed(1) : precision.toFixed(1)) + ' %'
+          : '—';
+
+      document.getElementById('recognizedGamesPlayed').textContent =
+        persona.partidasJugadas ?? 0;
+
+      document.getElementById('recognizedNextGame').textContent =
+        persona.proximaPartida ?? '';
+
+      returningPlayerScreen.classList.add('hidden');
+      document.getElementById('recognizedPlayerScreen').classList.remove('hidden');
+
+      return;
+    }
+
+    alert(
+      'No pudimos encontrarte con esa Clave CALCLANDIA. ' +
+      'Puedes intentar nuevamente o elegir NO LA RECUERDO.'
+    );
+
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      'No pudimos encontrarte en este momento. ' +
+      'Puedes intentar nuevamente o elegir NO LA RECUERDO.'
+    );
+
+  } finally {
+    findByKeyButton.disabled = false;
+    findByKeyButton.textContent = 'ENCUÉNTRAME';
+  }
+});
 // ===== FIN NAVEGACIÓN PUERTA DE ENTRADA =====
 function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 
