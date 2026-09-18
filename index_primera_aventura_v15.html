@@ -1103,6 +1103,119 @@ if (btnYaJugoSi) {
   });
 }
 // ===== FIN BLOQUE 1D =====
+
+ // ===== CALCLANDIA - BLOQUE 1E: BUSCAR POR CLAVE =====
+document.addEventListener('click', async function (event) {
+
+  if (event.target.id !== 'btnEncontrame') return;
+
+  const inputClave = document.getElementById('claveCalclandia');
+  const puerta = document.getElementById('puertaCalclandia');
+
+  const clave = inputClave ? inputClave.value.trim() : '';
+
+  if (!clave) {
+    alert('Escribe tu Clave CALCLANDIA.');
+    if (inputClave) inputClave.focus();
+    return;
+  }
+
+  const boton = event.target;
+  const textoOriginal = boton.innerText;
+
+  boton.disabled = true;
+  boton.innerText = 'BUSCANDO...';
+
+  try {
+
+    const respuesta = await fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({
+        accion: 'BUSCAR_CLAVE_CALCLANDIA',
+        clave_calclandia: clave
+      })
+    });
+
+    const resultado = await respuesta.json();
+
+    if (!resultado.ok || !resultado.encontrado || !resultado.participante) {
+
+      puerta.innerHTML = `
+        <h1 style="color:#012060;">No pudimos encontrarte con esa clave</h1>
+
+        <p>No importa. Podemos buscarte de otra manera.</p>
+
+        <div style="margin-top:16px;">
+          <button type="button" id="btnNoRecuerdo">NO LA RECUERDO</button>
+          <button type="button" onclick="location.reload()">VOLVER</button>
+        </div>
+      `;
+
+      return;
+    }
+
+    const p = resultado.participante;
+    const indicadores = p.indicadores || {};
+
+    const precision =
+      Number(indicadores.mejorPrecision || 0) <= 1
+        ? Math.round(Number(indicadores.mejorPrecision || 0) * 100)
+        : Math.round(Number(indicadores.mejorPrecision || 0));
+
+    const partidas = Number(indicadores.partidasJugadas || 0);
+
+    puerta.innerHTML = `
+      <h1 style="color:#012060;">¡Hola, ${p.participante || ''}!</h1>
+
+      <p><strong>¡Claro que te recordamos!</strong></p>
+
+      <div style="margin:20px auto;max-width:420px;text-align:left;">
+        <p>🏆 Tu mayor puntuación: <strong>${indicadores.mejorPuntuacion || 0}</strong></p>
+        <p>🎯 Tu mejor precisión: <strong>${precision} %</strong></p>
+        <p>🎲 Has jugado <strong>${partidas}</strong> partidas</p>
+      </div>
+
+      <p>La que estás por comenzar será</p>
+
+      <h2>tu partida N.º ${partidas + 1}</h2>
+
+      <h2>¿Eres tú?</h2>
+
+      <div>
+        <button type="button" id="btnIdentidadSi">SÍ</button>
+        <button type="button" id="btnIdentidadNo">NO</button>
+      </div>
+    `;
+
+    window.calclandiaParticipanteEncontrado = p;
+
+  } catch (error) {
+
+    console.error(error);
+
+    puerta.innerHTML = `
+      <h1 style="color:#012060;">Sigamos adelante</h1>
+
+      <p>No pudimos comprobar tu clave en este momento.</p>
+      <p><strong>Esto no impedirá que juegues.</strong></p>
+
+      <button type="button" id="btnNoRecuerdo">CONTINUAR</button>
+    `;
+
+  } finally {
+
+    if (document.body.contains(boton)) {
+      boton.disabled = false;
+      boton.innerText = textoOriginal;
+    }
+  }
+});
+// ===== FIN BLOQUE 1E =====
+ 
 </script>
+
 </body>
 </html>
