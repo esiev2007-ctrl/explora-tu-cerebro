@@ -1064,6 +1064,45 @@ Tu cerebro en 90 segundos
 
  prompt('Copia tu resultado y la invitación:',textoCompleto);
 }
+
+ // ===== CALCLANDIA - BLOQUE 1D: PARTICIPANTE QUE REGRESA =====
+const btnYaJugoSi = document.getElementById('btnYaJugoSi');
+
+if (btnYaJugoSi) {
+  btnYaJugoSi.addEventListener('click', function () {
+    const puerta = document.getElementById('puertaCalclandia');
+    const formulario = document.getElementById('formularioAnterior');
+
+    if (puerta) {
+      puerta.innerHTML = `
+        <h1 style="color:#012060;">¡Qué bueno tenerte de vuelta!</h1>
+
+        <p><strong>Queremos encontrarte para recordar tus logros.</strong></p>
+
+        <h2>¿Cuál es tu Clave CALCLANDIA?</h2>
+
+        <input
+          type="number"
+          id="claveCalclandia"
+          inputmode="numeric"
+          min="1"
+          placeholder="327"
+          style="max-width:220px;"
+        >
+
+        <div style="margin-top:16px;">
+          <button type="button" id="btnEncontrame">ENCUÉNTRAME</button>
+          <button type="button" id="btnNoRecuerdo">NO LA RECUERDO</button>
+        </div>
+      `;
+    }
+
+    if (formulario) {
+      formulario.classList.add('hidden');
+    }
+  });
+}
+// ===== FIN BLOQUE 1D =====
 </script>
 </body>
 </html>
