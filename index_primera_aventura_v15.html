@@ -1230,6 +1230,64 @@ document.addEventListener('click', async function (event) {
 });
 
 // ===== FIN BLOQUE 1E =====
+
+// ===== BLOQUE 1F: CONFIRMAR PARTICIPANTE =====
+document.addEventListener('click', function(event) {
+  if (event.target.id !== 'btnIdentidadSi') return;
+
+  const p = window.calclandiaParticipanteEncontrado;
+  const puerta = document.getElementById('puertaCalclandia');
+
+  if (!p || !puerta) {
+    console.warn('CALCLANDIA: participante no disponible.');
+    return;
+  }
+
+  // Guardamos la identidad confirmada para los pasos siguientes.
+  window.calclandiaParticipanteConfirmado = p;
+
+  const nombre = p.participante || p.nombre || '';
+  const partidas = Number(p.partidasJugadas ?? p.intentos ?? 0);
+  const proximaPartida =
+    Number(p.proximoIntento ?? p.proximaPartida ?? (partidas + 1));
+
+  const puntuacion =
+    Number(p.mejorPuntuacion ?? p.puntuacionMaxima ?? 0);
+
+  let precision =
+    Number(p.mejorPrecision ?? p.precisionMaxima ?? 0);
+
+  if (precision > 0 && precision <= 1) {
+    precision *= 100;
+  }
+
+  puerta.innerHTML = `
+    <h1 style="color:#012060;">
+      ${nombre ? '¡Hola, ' + nombre + '!' : '¡Todo listo!'}
+    </h1>
+
+    <h2>Hoy tienes una nueva oportunidad</h2>
+
+    <p>
+      Estás por jugar
+      <strong>tu partida N.º ${proximaPartida}</strong>.
+    </p>
+
+    <p><strong>Tu reto es superar tu mejor versión:</strong></p>
+
+    <p>🏆 Mayor puntuación: <strong>${puntuacion}</strong></p>
+    <p>🎯 Mejor precisión: <strong>${precision.toFixed(precision % 1 ? 1 : 0)} %</strong></p>
+
+    <p style="margin-top:22px;">
+      Y formas parte de una comunidad que crece con cada partida.
+    </p>
+
+    <button type="button" id="btnPrepararPartidaCalclandia">
+      COMENZAR
+    </button>
+  `;
+});
+// ===== FIN BLOQUE 1F ===== 
  
 </script>
 
