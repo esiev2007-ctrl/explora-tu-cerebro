@@ -442,20 +442,35 @@ async function startGame(){
    boton.innerText='COMENZAR';
  }
  estadoIdentidad.innerText='';
- localStorage.setItem("ctcPlayerData90", JSON.stringify(playerData));
- gameStartTime=Date.now();
- document.getElementById("start").classList.add("hidden");
- document.getElementById("game").classList.remove("hidden");
- generateQuestion();
- document.getElementById("answer").focus();
-
- timer=setInterval(()=>{
-  timeLeft--;
-  document.getElementById("timer").innerText=timeLeft;
-  if(timeLeft<=0) endGame();
- },1000);
+ iniciarMotorJuegoCalclandia_();
 }
 
+// ===== MOTOR DE JUEGO CALCLANDIA =====
+function iniciarMotorJuegoCalclandia_() {
+  localStorage.setItem(
+    "ctcPlayerData90",
+    JSON.stringify(playerData)
+  );
+
+  gameStartTime = Date.now();
+
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+
+  generateQuestion();
+  document.getElementById("answer").focus();
+
+  timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").innerText = timeLeft;
+
+    if (timeLeft <= 0) {
+      endGame();
+    }
+  }, 1000);
+}
+// ===== FIN MOTOR DE JUEGO CALCLANDIA =====
+ 
 async function consultarIdentidadPrevia_(datos){
  const respuestaHttp=await fetch(URL_APPS_SCRIPT,{
    method:'POST',
