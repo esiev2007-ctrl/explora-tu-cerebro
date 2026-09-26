@@ -1205,7 +1205,14 @@ document.addEventListener('click', async function (event) {
       </div>
     `;
 
-    window.calclandiaParticipanteEncontrado = p;
+    window.calclandiaParticipanteEncontrado = {
+  participante: p,
+  indicadores: {
+    mejorPuntuacion: Number(indicadores.mejorPuntuacion || 0),
+    mejorPrecision: Number(indicadores.mejorPrecision || 0),
+    partidasJugadas: partidas
+  }
+};
 
   } catch (error) {
 
@@ -1246,8 +1253,10 @@ document.addEventListener('click', function(event) {
   // Guardamos la identidad confirmada para los pasos siguientes.
   window.calclandiaParticipanteConfirmado = p;
 
-  const nombre = p.participante || '';
+  const participante = p.participante || {};
 const indicadores = p.indicadores || {};
+
+const nombre = participante.participante || '';
 
 const partidas =
   Number(indicadores.partidasJugadas || 0);
