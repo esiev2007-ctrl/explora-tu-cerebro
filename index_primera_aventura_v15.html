@@ -1246,16 +1246,19 @@ document.addEventListener('click', function(event) {
   // Guardamos la identidad confirmada para los pasos siguientes.
   window.calclandiaParticipanteConfirmado = p;
 
-  const nombre = p.participante || p.nombre || '';
-  const partidas = Number(p.partidasJugadas ?? p.intentos ?? 0);
-  const proximaPartida =
-    Number(p.proximoIntento ?? p.proximaPartida ?? (partidas + 1));
+  const nombre = p.participante || '';
+const indicadores = p.indicadores || {};
 
-  const puntuacion =
-    Number(p.mejorPuntuacion ?? p.puntuacionMaxima ?? 0);
+const partidas =
+  Number(indicadores.partidasJugadas || 0);
 
-  let precision =
-    Number(p.mejorPrecision ?? p.precisionMaxima ?? 0);
+const proximaPartida = partidas + 1;
+
+const puntuacion =
+  Number(indicadores.mejorPuntuacion || 0);
+
+let precision =
+  Number(indicadores.mejorPrecision || 0);
 
   if (precision > 0 && precision <= 1) {
     precision *= 100;
