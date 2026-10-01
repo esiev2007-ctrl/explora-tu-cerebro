@@ -1300,6 +1300,89 @@ let precision =
   `;
 });
 // ===== FIN BLOQUE 1F ===== 
+
+// ===== BLOQUE 1G: PREPARAR PARTIDA CALCLANDIA =====
+document.addEventListener('click', async function(event) {
+  if (event.target.id !== 'btnPrepararPartidaCalclandia') return;
+
+  const confirmado = window.calclandiaParticipanteConfirmado;
+  const boton = event.target;
+
+  if (!confirmado || !confirmado.participante) {
+    console.warn('CALCLANDIA: participante confirmado no disponible.');
+    return;
+  }
+
+  const participante = confirmado.participante;
+  const idCTC = participante.idCTC || participante.id_ctc || '';
+
+  if (!idCTC) {
+    console.warn('CALCLANDIA: ID CTC canónico no disponible.');
+    return;
+  }
+
+  // Un solo ID para todo el ciclo de esta partida.
+  const idPartida =
+    window.calclandiaIdPartidaActual || crearIdPartida();
+
+  window.calclandiaIdPartidaActual = idPartida;
+
+  boton.disabled = true;
+  boton.innerText = 'PREPARANDO...';
+
+  try {
+    const respuestaHttp = await fetch(
+      URL_APPS_SCRIPT,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          accion: 'INICIAR_PARTIDA_CALCLANDIA',
+          id_ctc: idCTC,
+          id_partida: idPartida
+        })
+      }
+    );
+
+    const texto = await respuestaHttp.text();
+    const respuesta = JSON.parse(texto);
+
+    if (!respuesta.ok) {
+      throw new Error(
+        respuesta.mensaje ||
+        'No se pudo preparar la partida.'
+      );
+    }
+
+    window.calclandiaPartidaPreparada = {
+      idPartida: idPartida,
+      numeroReservado:
+        respuesta.numeroGeneralReservado ||
+        respuesta.numeroReservado ||
+        null,
+      respuestaBackend: respuesta
+    };
+
+    console.log(
+      'CALCLANDIA - PARTIDA PREPARADA',
+      window.calclandiaPartidaPreparada
+    );
+
+    boton.innerText = 'PARTIDA PREPARADA';
+
+  } catch (error) {
+    console.error(
+      'CALCLANDIA: error al preparar partida.',
+      error
+    );
+
+    boton.disabled = false;
+    boton.innerText = 'COMENZAR';
+  }
+});
+// ===== FIN BLOQUE 1G =====
  
 </script>
 
