@@ -1205,15 +1205,16 @@ document.addEventListener('click', async function (event) {
       </div>
     `;
 
-    window.calclandiaParticipanteEncontrado = {
+ window.calclandiaParticipanteEncontrado = {
   participante: p,
+  idCtcInterno: resultado.idCtcInterno || '',
   indicadores: {
     mejorPuntuacion: Number(indicadores.mejorPuntuacion || 0),
     mejorPrecision: Number(indicadores.mejorPrecision || 0),
     partidasJugadas: partidas
   }
 };
-
+   
   } catch (error) {
 
     console.error(error);
@@ -1314,8 +1315,12 @@ document.addEventListener('click', async function(event) {
   }
 
   const participante = confirmado.participante;
-  const idCTC = participante.idCTC || participante.id_ctc || '';
-
+  const idCTC =
+  confirmado.idCtcInterno ||
+  participante.idCTC ||
+  participante.id_ctc ||
+  '';
+ 
   if (!idCTC) {
     console.warn('CALCLANDIA: ID CTC canónico no disponible.');
     return;
