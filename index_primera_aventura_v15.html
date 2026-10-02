@@ -682,7 +682,9 @@ function getDispositivo(){
 
 async function enviarResultadoAutomatico(resultado) {
   const payload = {
-    id_partida: crearIdPartida(),
+    id_partida:
+     window.calclandiaIdPartidaActual ||
+     crearIdPartida(),
     participante: playerData.participante || '',
     pais: playerData.pais || 'Bolivia',
     ciudad: playerData.ciudad || '',
