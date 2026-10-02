@@ -685,6 +685,10 @@ async function enviarResultadoAutomatico(resultado) {
     id_partida:
      window.calclandiaIdPartidaActual ||
      crearIdPartida(),
+   
+     numero_reservado:
+      window.calclandiaPartidaPreparada?.numeroReservado || '',
+   
     participante: playerData.participante || '',
     pais: playerData.pais || 'Bolivia',
     ciudad: playerData.ciudad || '',
