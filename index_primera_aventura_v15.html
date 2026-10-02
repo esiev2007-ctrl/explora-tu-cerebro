@@ -1383,6 +1383,34 @@ document.addEventListener('click', async function(event) {
 
     boton.innerText = 'PARTIDA PREPARADA';
 
+   // Preparamos los datos del participante para el motor del juego.
+   playerData = {
+     participante: participante.participante || '',
+     fecha_nacimiento:
+       participante.fechaNacimiento ||
+       participante.fecha_nacimiento ||
+       '',
+     pais: participante.pais || 'Bolivia',
+     ciudad:
+       participante.municipio ||
+       participante.ciudad ||
+       '',
+     municipio:
+       participante.municipio ||
+       participante.ciudad ||
+       '',
+     relacion:
+       participante.relacion ||
+       participante.relacion_car ||
+       '',
+     id_ctc: idCTC,
+     id_ctc_confirmado: idCTC
+   };
+   
+   // La partida ya tiene identidad, ID PARTIDA y reserva.
+   // Ahora sí iniciamos los 90 segundos.
+   iniciarMotorJuegoCalclandia_();
+
   } catch (error) {
     console.error(
       'CALCLANDIA: error al preparar partida.',
