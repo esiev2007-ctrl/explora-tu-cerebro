@@ -245,7 +245,7 @@ input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding
  <a id="communityLink" class="community-button" href="https://wa.me/59171182342" target="_blank" rel="noopener noreferrer">QUIERO SUMARME POR WHATSAPP</a>
 </div>
 <br><br>
-<button onclick="location.reload()">JUGAR DE NUEVO</button>
+<button type="button" onclick="jugarDeNuevoCalclandia_()">JUGAR DE NUEVO</button>
 </div>
 </div>
 
@@ -1422,6 +1422,120 @@ document.addEventListener('click', async function(event) {
   }
 });
 // ===== FIN BLOQUE 1G =====
+
+// ===== BLOQUE 1H: JUGAR DE NUEVO EN LA MISMA SESIÓN =====
+async function jugarDeNuevoCalclandia_() {
+
+  const confirmado = window.calclandiaParticipanteConfirmado;
+
+  if (!confirmado || !confirmado.participante) {
+    console.warn(
+      'CALCLANDIA: no existe una identidad confirmada para esta sesión.'
+    );
+    return;
+  }
+
+  // La identidad se conserva.
+  // Todo lo perteneciente a la partida anterior se descarta.
+  clearInterval(timer);
+
+  timeLeft = 90;
+  level = 1;
+  maxLevel = 1;
+  correct = 0;
+  errors = 0;
+  streak = 0;
+  maxStreak = 0;
+  upCount = 0;
+  downCount = 0;
+  currentAnswer = 0;
+  currentExpr = '';
+  mistakes = [];
+  gameStartTime = null;
+  resultAlreadySent = false;
+
+  // La nueva partida debe tener identidad técnica propia.
+  window.calclandiaIdPartidaActual = null;
+  window.calclandiaPartidaPreparada = null;
+
+  const participante = confirmado.participante;
+
+  const idCTC =
+    confirmado.idCtcInterno ||
+    participante.idCTC ||
+    participante.id_ctc ||
+    '';
+
+  if (!idCTC) {
+    console.warn(
+      'CALCLANDIA: ID CTC canónico no disponible para nueva partida.'
+    );
+    return;
+  }
+
+  const idPartida = crearIdPartida();
+  window.calclandiaIdPartidaActual = idPartida;
+
+  try {
+    const respuestaHttp = await fetch(
+      URL_APPS_SCRIPT,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          accion: 'INICIAR_PARTIDA_CALCLANDIA',
+          id_ctc: idCTC,
+          id_partida: idPartida
+        })
+      }
+    );
+
+    const texto = await respuestaHttp.text();
+    const respuesta = JSON.parse(texto);
+
+    if (!respuesta.ok) {
+      throw new Error(
+        respuesta.mensaje ||
+        'No se pudo preparar la nueva partida.'
+      );
+    }
+
+    window.calclandiaPartidaPreparada = {
+      idPartida: idPartida,
+      numeroReservado:
+        respuesta.numeroGeneralReservado ||
+        respuesta.numeroReservado ||
+        null,
+      respuestaBackend: respuesta
+    };
+
+    // Conservamos al participante ya identificado.
+    // Sólo actualizamos los datos necesarios para registrar la nueva partida.
+    playerData.id_ctc = idCTC;
+    playerData.id_ctc_confirmado = idCTC;
+
+    document.getElementById('result').classList.add('hidden');
+
+    iniciarMotorJuegoCalclandia_();
+
+  } catch (error) {
+    console.error(
+      'CALCLANDIA: error al preparar nueva partida.',
+      error
+    );
+
+    window.calclandiaIdPartidaActual = null;
+    window.calclandiaPartidaPreparada = null;
+
+    alert(
+      'No pudimos preparar una nueva partida en este momento. ' +
+      'Inténtalo nuevamente.'
+    );
+  }
+}
+// ===== FIN BLOQUE 1H =====
  
 </script>
 
