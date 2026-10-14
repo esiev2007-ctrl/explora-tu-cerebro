@@ -47,10 +47,24 @@ input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding
 .brand-rule{width:92px;height:5px;background:#f9bc04;border-radius:99px;margin:15px auto 0}
 .brand-lockup{
   display:grid;
-  grid-template-columns:100px minmax(0,1fr) 100px;
+  grid-template-columns:1fr 1fr;
   align-items:center;
   gap:10px;
   margin-bottom:18px;
+}
+.brand-lockup .brand{
+  grid-column:1 / -1;
+  grid-row:2;
+}
+.brand-lockup .brand-logo-calclandia{
+  grid-column:1;
+  grid-row:1;
+  justify-self:start;
+}
+.brand-lockup .brand-logo-cacho{
+  grid-column:2;
+  grid-row:1;
+  justify-self:end;
 }
  .brand-lockup .brand{
   min-width:0;
