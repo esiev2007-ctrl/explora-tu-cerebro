@@ -447,6 +447,10 @@ async function startGame(){
 
 // ===== MOTOR DE JUEGO CALCLANDIA =====
 function iniciarMotorJuegoCalclandia_() {
+  clearInterval(timer);
+  timeLeft = 90;
+  document.getElementById("timer").innerText = timeLeft;
+
   localStorage.setItem(
     "ctcPlayerData90",
     JSON.stringify(playerData)
