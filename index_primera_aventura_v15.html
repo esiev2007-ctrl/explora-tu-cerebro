@@ -885,6 +885,9 @@ async function enviarResultadoAutomatico(resultado) {
 }
  
 function endGame(){
+ if (resultAlreadySent) return;
+ resultAlreadySent = true;
+
  clearInterval(timer);
  document.getElementById("game").classList.add("hidden");
  document.getElementById("result").classList.remove("hidden");
@@ -931,8 +934,7 @@ document.getElementById("score").innerText=score;
    box.classList.add("hidden");
  }
 
- if (!resultAlreadySent) {
-  resultAlreadySent = true;
+ {
 
   const resultado = {
     puntuacion: score,
