@@ -1474,7 +1474,7 @@ document.addEventListener('click', async function(event) {
    
    // La partida ya tiene identidad, ID PARTIDA y reserva.
    // Ahora sí iniciamos los 90 segundos.
-   iniciarMotorJuegoCalclandia_();
+   mostrarPartidaReservadaCalclandia_();
 
   } catch (error) {
     console.error(
@@ -1487,6 +1487,49 @@ document.addEventListener('click', async function(event) {
   }
 });
 // ===== FIN BLOQUE 1G =====
+
+// ===== PANTALLA PREVIA A CADA PARTIDA =====
+function mostrarPartidaReservadaCalclandia_() {
+  const reserva = window.calclandiaPartidaPreparada;
+  const numero = reserva?.numeroReservado;
+
+  const puerta = document.getElementById('puertaCalclandia');
+  const resultado = document.getElementById('result');
+
+  if (!reserva || !puerta) {
+    console.warn('CALCLANDIA: reserva no disponible.');
+    return;
+  }
+
+  if (resultado) resultado.classList.add('hidden');
+
+  puerta.innerHTML = `
+    <h1 style="color:#ffffff;">¡TODO PREPARADO!</h1>
+
+    <p>El número reservado para la Partida que jugarás es:</p>
+
+    <h1 style="color:#ffbf00;">
+      ${numero ?? 'Pendiente de asignación'}
+    </h1>
+
+    <button type="button" id="btnJugarPartidaReservada">
+      ¡A JUGAR!
+    </button>
+  `;
+
+  puerta.classList.remove('hidden');
+  document.getElementById('start').classList.remove('hidden');
+}
+
+// ===== INICIAR PARTIDA DESDE PANTALLA PREVIA =====
+document.addEventListener('click', function(event) {
+  if (event.target.id !== 'btnJugarPartidaReservada') return;
+
+  const boton = event.target;
+  boton.disabled = true;
+
+  iniciarMotorJuegoCalclandia_();
+});
 
 // ===== BLOQUE 1H: JUGAR DE NUEVO EN LA MISMA SESIÓN =====
 async function jugarDeNuevoCalclandia_() {
@@ -1583,7 +1626,7 @@ async function jugarDeNuevoCalclandia_() {
 
     document.getElementById('result').classList.add('hidden');
 
-    iniciarMotorJuegoCalclandia_();
+    mostrarPartidaReservadaCalclandia_();
 
   } catch (error) {
     console.error(
