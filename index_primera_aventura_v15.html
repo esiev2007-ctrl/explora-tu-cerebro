@@ -1335,7 +1335,9 @@ document.addEventListener('click', function(event) {
   const participante = p.participante || {};
 const indicadores = p.indicadores || {};
 
-const nombre = participante.participante || '';
+const nombre = typeof participante === 'string'
+  ? participante
+  : (participante.participante || participante.nombre || '');
 
 const partidas =
   Number(indicadores.partidasJugadas || 0);
