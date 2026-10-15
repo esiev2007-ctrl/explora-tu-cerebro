@@ -283,6 +283,9 @@ input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding
 <p><strong>Tu cerebro en 90 segundos</strong></p>
 <p style="margin-bottom:4px;color:#012060;font-weight:700">Puntuación de esta aventura</p>
 <div class="big" id="score"></div>
+<div id="numeroPartidaConfirmada"
+     style="display:none;margin:12px auto;color:#087443;font-weight:700;font-size:18px;">
+</div>
 <div class="result">
 🎯 Precisión: <span id="precision"></span><br>
 🚀 Correctas: <span id="correct"></span><br>
@@ -513,6 +516,11 @@ async function startGame(){
 
 // ===== MOTOR DE JUEGO CALCLANDIA =====
 function iniciarMotorJuegoCalclandia_() {
+  const avisoPartida = document.getElementById('numeroPartidaConfirmada');
+  if (avisoPartida) {
+    avisoPartida.style.display = 'none';
+    avisoPartida.innerText = '';
+  }
   clearInterval(timer);
   timeLeft = 90;
   document.getElementById("timer").innerText = timeLeft;
@@ -1025,6 +1033,14 @@ document.getElementById("score").innerText=score;
 
   enviarResultadoAutomatico(resultado)
     .then(function(respuesta) {
+      const numeroDefinitivo = respuesta.numeroDefinitivo || respuesta.numero_definitivo;
+      const avisoPartida = document.getElementById('numeroPartidaConfirmada');
+      
+      if (numeroDefinitivo && avisoPartida) {
+        avisoPartida.innerText =
+          '✅ ¡Tu partida quedó registrada con el N.º ' + numeroDefinitivo + '!';
+        avisoPartida.style.display = 'block';
+      }
       mostrarRecordsOficiales_(respuesta);
       estadoGuardado.innerText =
         '✅ Resultado registrado automáticamente.';
