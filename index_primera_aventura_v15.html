@@ -1237,7 +1237,7 @@ document.addEventListener('click', async function (event) {
     if (!resultado.ok || !resultado.encontrado || !resultado.participante) {
 
       puerta.innerHTML = `
-        <h1 style="color:#012060;">No pudimos encontrarte con esa clave</h1>
+        <h1 style="color:#ffffff;">No pudimos encontrarte con esa clave</h1>
 
         <p>No importa. Podemos buscarte de otra manera.</p>
 
@@ -1261,7 +1261,7 @@ document.addEventListener('click', async function (event) {
     const partidas = Number(indicadores.partidasJugadas || 0);
 
     puerta.innerHTML = `
-      <h1 style="color:#012060;">¡Hola, ${p.participante || ''}!</h1>
+      <h1 style="color:#ffffff;">¡Hola, ${p.nombre || p.participante || ''}!</h1>
 
       <p><strong>¡Claro que te recordamos!</strong></p>
 
@@ -1298,7 +1298,7 @@ document.addEventListener('click', async function (event) {
     console.error(error);
 
     puerta.innerHTML = `
-      <h1 style="color:#012060;">Sigamos adelante</h1>
+      <h1 style="color:#ffffff;">Sigamos adelante</h1>
 
       <p>No pudimos comprobar tu clave en este momento.</p>
       <p><strong>Esto no impedirá que juegues.</strong></p>
@@ -1353,7 +1353,7 @@ let precision =
   }
 
   puerta.innerHTML = `
-    <h1 style="color:#012060;">
+    <h1 style="color:#ffffff;">
       ${nombre ? '¡Hola, ' + nombre + '!' : '¡Todo listo!'}
     </h1>
 
