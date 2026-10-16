@@ -1033,7 +1033,7 @@ document.getElementById("score").innerText=score;
 
   enviarResultadoAutomatico(resultado)
     .then(function(respuesta) {
-      const numeroDefinitivo = respuesta.numeroDefinitivo || respuesta.numero_definitivo;
+      const numeroDefinitivo = respuesta.numeroDefinitivo || respuesta.numero_definitivo || respuesta.registro;
       const avisoPartida = document.getElementById('numeroPartidaConfirmada');
       
       if (numeroDefinitivo && avisoPartida) {
