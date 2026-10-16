@@ -1216,6 +1216,24 @@ if (btnYaJugoSi) {
 }
 // ===== FIN BLOQUE 1D =====
 
+  
+// ===== CALCLANDIA - RUTA C: PARTICIPANTE NUEVO =====
+const btnYaJugoNo = document.getElementById('btnYaJugoNo');
+
+if (btnYaJugoNo) {
+  btnYaJugoNo.addEventListener('click', function () {
+    const puerta = document.getElementById('puertaCalclandia');
+    const formulario = document.getElementById('formularioAnterior');
+
+    if (puerta && formulario) {
+      puerta.classList.add('hidden');
+      formulario.classList.remove('hidden');
+    }
+  });
+}
+// ===== FIN RUTA C: ACCESO AL FORMULARIO =====
+
+
  // ===== CALCLANDIA - BLOQUE 1E: BUSCAR POR CLAVE =====
 document.addEventListener('click', async function (event) {
 
