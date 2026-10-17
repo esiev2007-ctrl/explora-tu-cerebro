@@ -696,7 +696,13 @@ async function startGame(){
   }
 
   estadoIdentidad.innerText = '';
-  iniciarMotorJuegoCalclandia_();
+
+if (window.calclandiaPartidaPreparada?.idPartida) {
+  mostrarPartidaReservadaCalclandia_();
+} else {
+  estadoIdentidad.innerText =
+    'No se pudo preparar la partida. Inténtalo nuevamente.';
+}
 }
 
 // ===== MOTOR DE JUEGO CALCLANDIA =====
