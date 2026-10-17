@@ -504,12 +504,28 @@ async function startGame(){
      estadoIdentidad.innerText='Revisa o corrige tus datos antes de comenzar.';
      return;
    }
-       if (decision.identidadNuevaComprobada === true) {
+       if (
+          decision.identidadNuevaComprobada === true ||
+          decision.id_ctc_confirmado
+        ) {
 
-  if (window.calclandiaParticipanteConfirmado?.idCtcInterno) {
-
-  const confirmado = window.calclandiaParticipanteConfirmado;
-  const idCTC = confirmado.idCtcInterno;
+  const idCTC =
+    decision.id_ctc_confirmado ||
+    window.calclandiaParticipanteConfirmado?.idCtcInterno ||
+    '';
+  
+  if (idCTC) {
+    if (!window.calclandiaParticipanteConfirmado?.idCtcInterno) {
+      window.calclandiaParticipanteConfirmado = {
+        idCtcInterno: idCTC,
+        participante: {
+          participante: datosProvisionales.participante,
+          fechaNacimiento: datosProvisionales.fecha_nacimiento,
+          municipio: datosProvisionales.ciudad,
+          pais: datosProvisionales.pais
+        }
+      };
+    }
 
   const idPartida =
     window.calclandiaIdPartidaActual || crearIdPartida();
