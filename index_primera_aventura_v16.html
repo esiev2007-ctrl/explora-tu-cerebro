@@ -498,7 +498,7 @@ async function startGame(){
  estadoIdentidad.innerText='Comprobando tu identidad de forma segura…';
  try{
    const decision=await verificarIdentidadAntesDeComenzar_(datosProvisionales);
-   if(!decision){
+   if (!decision || !Object.keys(decision).length) {
      estadoIdentidad.innerText='Revisa o corrige tus datos antes de comenzar.';
      return;
    }
