@@ -496,25 +496,207 @@ async function startGame(){
  boton.disabled=true;
  boton.innerText='VERIFICANDO…';
  estadoIdentidad.innerText='Comprobando tu identidad de forma segura…';
- try{
-   const decision=await verificarIdentidadAntesDeComenzar_(datosProvisionales);
+ try {
+  const decision = window.calclandiaParticipanteConfirmado?.idCtcInterno
+    ? { identidadNuevaComprobada: true }
+    : await verificarIdentidadAntesDeComenzar_(datosProvisionales);
    if (!decision || !Object.keys(decision).length) {
      estadoIdentidad.innerText='Revisa o corrige tus datos antes de comenzar.';
      return;
    }
-   playerData=Object.assign({},datosProvisionales,decision);
- }catch(error){
-   console.error(error);
-   estadoIdentidad.innerText='No fue posible verificar la identidad. Inténtalo nuevamente.';
-   alert('No fue posible verificar tu identidad. No se registró nada. Revisa tu conexión e inténtalo nuevamente.');
-   return;
- }finally{
-   identityCheckInProgress=false;
-   boton.disabled=false;
-   boton.innerText='COMENZAR';
- }
- estadoIdentidad.innerText='';
- iniciarMotorJuegoCalclandia_();
+       if (decision.identidadNuevaComprobada === true) {
+
+  if (window.calclandiaParticipanteConfirmado?.idCtcInterno) {
+
+  const confirmado = window.calclandiaParticipanteConfirmado;
+  const idCTC = confirmado.idCtcInterno;
+
+  const idPartida =
+    window.calclandiaIdPartidaActual || crearIdPartida();
+
+  window.calclandiaIdPartidaActual = idPartida;
+
+  estadoIdentidad.innerText =
+    'Recuperando la preparación de tu partida...';
+
+  const respuestaHttp = await fetch(URL_APPS_SCRIPT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify({
+      accion: 'INICIAR_PARTIDA_CALCLANDIA',
+      id_ctc: idCTC,
+      id_partida: idPartida
+    })
+  });
+
+  if (!respuestaHttp.ok) {
+    throw new Error('No fue posible recuperar la reserva.');
+  }
+
+  const respuesta = await respuestaHttp.json();
+
+  if (respuesta.ok !== true) {
+    throw new Error(
+      respuesta.mensaje || 'La reserva no fue confirmada.'
+    );
+  }
+
+  window.calclandiaPartidaPreparada = {
+    idPartida: idPartida,
+    numeroReservado:
+      respuesta.numeroGeneralReservado ||
+      respuesta.numeroReservado ||
+      null,
+    respuestaBackend: respuesta
+  };
+
+  estadoIdentidad.innerText = '';
+
+  mostrarPartidaReservadaCalclandia_();
+
+  return;
+}
+
+      estadoIdentidad.innerText =
+        'Registrando tu identidad en CALCLANDIA...';
+
+      const respuestaHttp = await fetch(URL_APPS_SCRIPT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          accion: 'CREAR_NUEVO_PARTICIPANTE_CALCLANDIA',
+          participante: datosProvisionales.participante,
+          fecha_nacimiento: datosProvisionales.fecha_nacimiento,
+          pais: datosProvisionales.pais,
+          municipio_region: datosProvisionales.ciudad,
+          relacion_car: datosProvisionales.relacion_car
+        })
+      });
+
+      if (!respuestaHttp.ok) {
+        throw new Error('No fue posible registrar al participante.');
+      }
+
+      const creacion = await respuestaHttp.json();
+
+      if (
+        creacion.ok !== true ||
+        creacion.codigo !== 'PARTICIPANTE_CREADO' ||
+        !creacion.idCtcInterno ||
+        !creacion.participante?.claveCalclandia
+      ) {
+        throw new Error(
+          'La creación no fue confirmada: ' +
+          (creacion.codigo || 'SIN_CODIGO')
+        );
+      }
+
+      const ficha = creacion.participante;
+      const idCTC = creacion.idCtcInterno;
+
+      playerData = Object.assign({}, datosProvisionales, {
+        id_ctc: idCTC,
+        id_ctc_confirmado: idCTC,
+        participante: ficha.nombre || datosProvisionales.participante,
+        fecha_nacimiento:
+          ficha.fechaNacimiento || datosProvisionales.fecha_nacimiento,
+        pais: ficha.pais || datosProvisionales.pais,
+        ciudad: ficha.municipio || datosProvisionales.ciudad,
+        relacion_car: datosProvisionales.relacion_car
+      });
+
+      window.calclandiaParticipanteConfirmado = {
+        idCtcInterno: idCTC,
+        participante: ficha
+      };
+
+      estadoIdentidad.innerText =
+        'Tu identidad fue registrada correctamente.';
+
+      alert(
+        '¡Bienvenido a CALCLANDIA!\n\n' +
+        'Tu Clave CALCLANDIA es: ' +
+        ficha.claveCalclandia +
+        '\n\nGuárdala. La utilizarás para encontrarte ' +
+        'en tus próximas visitas.'
+      );
+
+      const idPartida = crearIdPartida();
+
+      window.calclandiaIdPartidaActual = idPartida;
+
+      const reservaHttp = await fetch(URL_APPS_SCRIPT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          accion: 'INICIAR_PARTIDA_CALCLANDIA',
+          id_ctc: idCTC,
+          id_partida: idPartida
+        })
+      });
+
+      if (!reservaHttp.ok) {
+        throw new Error('No fue posible preparar la primera partida.');
+      }
+
+      const reserva = await reservaHttp.json();
+
+      if (reserva.ok !== true) {
+        throw new Error(
+          reserva.mensaje || 'La reserva no fue confirmada.'
+        );
+      }
+
+      window.calclandiaPartidaPreparada = {
+        idPartida: idPartida,
+        numeroReservado:
+          reserva.numeroGeneralReservado ||
+          reserva.numeroReservado ||
+          null,
+        respuestaBackend: reserva
+      };
+
+      estadoIdentidad.innerText = '';
+
+      mostrarPartidaReservadaCalclandia_();
+
+      return;
+    }
+
+    playerData = Object.assign({}, datosProvisionales, decision);
+
+  } catch (error) {
+
+    console.error('CALCLANDIA - Ruta C:', error);
+
+    estadoIdentidad.innerText =
+      'No fue posible completar el proceso. Inténtalo nuevamente.';
+
+    alert(
+      'No fue posible completar el proceso.\n\n' +
+      'Si ya recibiste tu Clave CALCLANDIA, ' +
+      'consérvala y utiliza la opción SÍ, YA JUGUÉ ' +
+      'para continuar sin crear otra identidad.'
+    );
+
+    return;
+
+  } finally {
+
+    identityCheckInProgress = false;
+    boton.disabled = false;
+    boton.innerText = 'COMENZAR';
+
+  }
+
+  estadoIdentidad.innerText = '';
+  iniciarMotorJuegoCalclandia_();
 }
 
 // ===== MOTOR DE JUEGO CALCLANDIA =====
@@ -626,7 +808,42 @@ function solicitarDecisionIdentidad_(respuesta){
 
 async function verificarIdentidadAntesDeComenzar_(datos){
  const respuesta=await consultarIdentidadPrevia_(datos);
- if(respuesta.codigo==='IDENTIDAD_NUEVA') return {};
+if (respuesta.codigo === 'IDENTIDAD_NUEVA') {
+  const respuestaHttp = await fetch(URL_APPS_SCRIPT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify({
+      accion: 'COMPROBAR_NUEVO_PARTICIPANTE_CALCLANDIA',
+      participante: datos.participante,
+      fecha_nacimiento: datos.fecha_nacimiento,
+      pais: datos.pais,
+      municipio_region: datos.ciudad
+    })
+  });
+
+  if (!respuestaHttp.ok) {
+    throw new Error('No fue posible comprobar la identidad.');
+  }
+
+  const comprobacion = await respuestaHttp.json();
+
+  if (
+    comprobacion.ok === true &&
+    comprobacion.codigo === 'IDENTIDAD_NUEVA_POSIBLE' &&
+    comprobacion.puedeCrear === true
+  ) {
+    return {
+      identidadNuevaComprobada: true
+    };
+  }
+
+  throw new Error(
+    'La identidad requiere revisión antes de crear un participante: ' +
+    (comprobacion.codigo || 'SIN_CODIGO')
+  );
+}
  if(
    respuesta.codigo==='IDENTIDAD_ENCONTRADA' ||
    respuesta.codigo==='IDENTIDAD_RELACIONADA' ||
