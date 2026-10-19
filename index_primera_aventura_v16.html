@@ -617,7 +617,13 @@ async function startGame(){
       }
 
       const ficha = creacion.participante;
+
+      const idCTC = creacion.idCtcInterno;
       
+      if (!idCTC) {
+        throw new Error('El servidor no devolvió el ID CTC definitivo.');
+      }         
+         
       playerData = Object.assign({}, datosProvisionales, {
         id_ctc: idCTC,
         id_ctc_confirmado: idCTC,
