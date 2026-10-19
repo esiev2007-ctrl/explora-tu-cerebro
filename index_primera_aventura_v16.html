@@ -618,15 +618,15 @@ async function startGame(){
 
       const ficha = creacion.participante;
 
-      const idCTC = creacion.idCtcInterno;
+      const idCTCCreado = creacion.idCtcInterno;
       
-      if (!idCTC) {
+      if (!idCTCCreado) {
         throw new Error('El servidor no devolvió el ID CTC definitivo.');
       }         
          
       playerData = Object.assign({}, datosProvisionales, {
-        id_ctc: idCTC,
-        id_ctc_confirmado: idCTC,
+        id_ctc: idCTCCreado,
+        id_ctc_confirmado: idCTCCreado,
         participante: ficha.nombre || datosProvisionales.participante,
         fecha_nacimiento:
           ficha.fechaNacimiento || datosProvisionales.fecha_nacimiento,
@@ -636,7 +636,7 @@ async function startGame(){
       });
 
       window.calclandiaParticipanteConfirmado = {
-        idCtcInterno: idCTC,
+        idCtcInterno: idCTCCreado,
         participante: ficha
       };
 
@@ -662,7 +662,7 @@ async function startGame(){
         },
         body: JSON.stringify({
           accion: 'INICIAR_PARTIDA_CALCLANDIA',
-          id_ctc: idCTC,
+          id_ctc: idCTCCreado,
           id_partida: idPartida
         })
       });
@@ -689,8 +689,8 @@ async function startGame(){
       };
 
       playerData = Object.assign({}, datosProvisionales, {
-        id_ctc: idCTC,
-        id_ctc_confirmado: idCTC
+        id_ctc: idCTCCreado,
+        id_ctc_confirmado: idCTCCreado
       });
       
       estadoIdentidad.innerText = '';
