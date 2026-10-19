@@ -568,10 +568,15 @@ async function startGame(){
     respuestaBackend: respuesta
   };
 
+  playerData = Object.assign({}, datosProvisionales, {
+    id_ctc: idCTC,
+    id_ctc_confirmado: idCTC
+  });
+  
   estadoIdentidad.innerText = '';
-
+  
   mostrarPartidaReservadaCalclandia_();
-
+  
   return;
 }
 
