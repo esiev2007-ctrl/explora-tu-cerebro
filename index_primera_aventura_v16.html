@@ -1608,6 +1608,48 @@ document.addEventListener('click', async function (event) {
 
 // ===== FIN BLOQUE 1E =====
 
+// ===== BLOQUE 1E-B: RECUPERACION SIN CLAVE =====
+
+document.addEventListener('click', function(event) {
+
+  if (event.target.id !== 'btnNoRecuerdo') return;
+
+  const puerta = document.getElementById('puertaCalclandia');
+
+  if (!puerta) return;
+
+  puerta.innerHTML = `
+    <h1 style="color:#ffffff;">¡Vamos a encontrarte!</h1>
+
+    <p>Si no recuerdas tu Clave CALCLANDIA,
+    podemos buscar tu registro.</p>
+
+    <p><strong>Escribe tus nombres y apellidos completos</strong></p>
+    <input type="text" id="buscameNombre"
+      autocomplete="name" style="width:100%;max-width:360px;">
+
+    <p><strong>Fecha de nacimiento</strong></p>
+    <input type="date" id="buscameFecha">
+
+    <p><strong>Municipio o ciudad</strong></p>
+    <input type="text" id="buscameMunicipio"
+      style="width:100%;max-width:360px;">
+
+    <div style="margin-top:20px;">
+      <button type="button" id="btnBuscameCalclandia">
+        BÚSCAME
+      </button>
+    </div>
+
+    <p style="font-size:0.85em;margin-top:16px;">
+      Tus datos se utilizarán para localizar tu registro.
+    </p>
+  `;
+
+});
+
+// ===== FIN BLOQUE 1E-B =====
+  
 // ===== BLOQUE 1F: CONFIRMAR PARTICIPANTE =====
 document.addEventListener('click', function(event) {
   if (event.target.id !== 'btnIdentidadSi') return;
