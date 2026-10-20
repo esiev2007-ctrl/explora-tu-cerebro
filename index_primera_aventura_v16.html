@@ -1649,6 +1649,133 @@ document.addEventListener('click', function(event) {
 });
 
 // ===== FIN BLOQUE 1E-B =====
+
+// ===== BLOQUE 1E-C: BUSCAME EN CTC =====
+
+document.addEventListener('click', async function(event) {
+
+  if (event.target.id !== 'btnBuscameCalclandia') return;
+
+  const nombre = document.getElementById('buscameNombre');
+  const fecha = document.getElementById('buscameFecha');
+  const municipio = document.getElementById('buscameMunicipio');
+  const puerta = document.getElementById('puertaCalclandia');
+  const boton = event.target;
+
+  if (!nombre || !fecha || !municipio || !puerta) return;
+
+  const participante = nombre.value.trim();
+  const nacimiento = fecha.value;
+  const ciudad = municipio.value.trim();
+
+  if (!participante || !nacimiento || !ciudad) {
+    alert('Completa los tres datos para buscar tu registro.');
+    return;
+  }
+
+  boton.disabled = true;
+  boton.innerText = 'BUSCANDO...';
+
+  try {
+
+    const respuesta = await fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({
+        accion: 'BUSCAR_PARTICIPANTE_CALCLANDIA',
+        participante: participante,
+        fecha_nacimiento: nacimiento,
+        municipio_region: ciudad,
+        pais: 'BOLIVIA'
+      })
+    });
+
+    if (!respuesta.ok) {
+      throw new Error('No se pudo consultar el servidor.');
+    }
+
+    const resultado = await respuesta.json();
+
+    if (
+      resultado.ok === true &&
+      resultado.codigo === 'PARTICIPANTE_ENCONTRADO' &&
+      resultado.encontrado === true &&
+      resultado.participante
+    ) {
+
+      const p = resultado.participante;
+      const indicadores = p.indicadores || {};
+
+      window.calclandiaParticipanteEncontrado = {
+        participante: p,
+        idCtcInterno: resultado.idCtcInterno || '',
+        indicadores: {
+          partidasJugadas: Number(indicadores.partidasJugadas || 0),
+          mejorPuntuacion: Number(indicadores.mejorPuntuacion || 0),
+          mejorPrecision: Number(indicadores.mejorPrecision || 0)
+        }
+      };
+
+      const nombreSeguro = document.createElement('div');
+      nombreSeguro.textContent = p.nombre || '';
+      const nombreVisible = nombreSeguro.innerHTML;
+
+      puerta.innerHTML = `
+        <h1 style="color:#ffffff;">¡Te encontramos!</h1>
+
+        <h2>${nombreVisible}</h2>
+
+        <p>Tu Clave CALCLANDIA es:</p>
+        <h2>${p.claveCalclandia}</h2>
+
+        <p>Partidas jugadas: ${Number(indicadores.partidasJugadas || 0)}</p>
+
+        <h2>¿Eres tú?</h2>
+
+        <button type="button" id="btnIdentidadSi">SÍ</button>
+        <button type="button" id="btnIdentidadNo">NO</button>
+      `;
+
+      return;
+    }
+
+    if (resultado.codigo === 'DATOS_INCOMPLETOS') {
+      alert('Revisa los tres datos e inténtalo nuevamente.');
+      return;
+    }
+
+    if (resultado.codigo === 'IDENTIDAD_PENDIENTE') {
+      alert(
+        'No hemos podido identificar tu registro con seguridad. ' +
+        'Por ahora, revisa tus datos e inténtalo nuevamente.'
+      );
+      return;
+    }
+
+    alert('No fue posible completar la búsqueda. Inténtalo nuevamente.');
+
+  } catch (error) {
+
+    console.error('Error en BÚSCAME:', error);
+
+    alert(
+      'No pudimos consultar tu registro en este momento. ' +
+      'Inténtalo nuevamente.'
+    );
+
+  } finally {
+
+    if (document.body.contains(boton)) {
+      boton.disabled = false;
+      boton.innerText = 'BÚSCAME';
+    }
+  }
+
+});
+
+// ===== FIN BLOQUE 1E-C =====
   
 // ===== BLOQUE 1F: CONFIRMAR PARTICIPANTE =====
 document.addEventListener('click', function(event) {
