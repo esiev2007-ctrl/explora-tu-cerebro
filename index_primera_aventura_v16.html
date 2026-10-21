@@ -1746,6 +1746,16 @@ document.addEventListener('click', async function(event) {
       return;
     }
 
+    if (resultado.codigo === 'SIN_COINCIDENCIAS') {
+      alert(
+        '¡No encontramos tu registro!\n\n' +
+        'Revisa que hayas escrito correctamente tus nombres y apellidos completos, ' +
+        'tu fecha de nacimiento y tu municipio.\n\n' +
+        'Corrige los datos e inténtalo nuevamente.'
+      );
+      return;
+    }
+    
     if (resultado.codigo === 'IDENTIDAD_PENDIENTE') {
       alert(
         'No hemos podido identificar tu registro con seguridad. ' +
