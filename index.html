@@ -10,6 +10,9 @@ body{font-family:Arial,sans-serif;background:#012060;margin:0;padding:0;text-ali
 .container{max-width:800px;margin:auto;padding:20px}
 .card{background:white;color:#222;padding:30px;margin-top:20px;border-radius:16px;box-shadow:0 12px 32px rgba(0,0,0,.24)}
 h1{color:#012060;font-weight:600;font-size:30px}
+#puertaCalclandia h1{
+  color:#ffffff;
+}
 button{background:#f9bc04;color:#012060;border:none;padding:14px 28px;font-size:20px;border-radius:10px;cursor:pointer;font-weight:600}
 button:hover{transform:scale(1.02)}
 button:disabled{cursor:wait;opacity:.72;transform:none}
@@ -45,7 +48,46 @@ input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding
 .brand-title span{display:block;color:#f9bc04;font-size:30px;margin-top:7px}
 .brand-tagline{color:#012060;font-size:19px;font-weight:700;margin:13px 0 0}
 .brand-rule{width:92px;height:5px;background:#f9bc04;border-radius:99px;margin:15px auto 0}
-.brand-lockup{display:flex;flex-direction:column;align-items:center;margin-bottom:18px}
+.brand-lockup{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  gap:10px;
+  margin-bottom:18px;
+}
+.brand-lockup .brand{
+  grid-column:1 / -1;
+  grid-row:2;
+}
+.brand-lockup .brand-logo-calclandia{
+  grid-column:1;
+  grid-row:1;
+  justify-self:start;
+}
+.brand-lockup .brand-logo-cacho{
+  grid-column:2;
+  grid-row:1;
+  justify-self:end;
+}
+ .brand-lockup .brand{
+  min-width:0;
+}
+
+.brand-lockup .brand-title{
+  font-size:clamp(16px,3.5vw,30px);
+  white-space:normal;
+  color:#ffffff;
+}
+
+.brand-lockup .brand-title span{
+  font-size:clamp(12px,2.5vw,20px);
+}
+
+.brand-lockup .brand-logo-calclandia,
+.brand-lockup .brand-logo-cacho{
+  width:100%;
+  max-width:100px;
+}
 .brand-lockup .brand{margin:10px 0 0}
 .brand-logo{display:flex;align-items:center;justify-content:center;background:#fff;border:1px solid rgba(91,216,255,.42);border-radius:14px;padding:7px;box-shadow:0 8px 22px rgba(0,0,0,.24)}
 .brand-logo img{display:block;width:100%;height:auto;object-fit:contain}
@@ -109,22 +151,62 @@ input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding
  .brand-title{font-size:29px;white-space:nowrap}
  .brand-title span{font-size:24px;white-space:normal}
  .brand-logo-cacho{width:98px;height:auto}
+ .brand-lockup{
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+}
+.brand-lockup .brand-logo-calclandia,
+.brand-lockup .brand-logo-cacho{
+  width:70px;
+}
+.brand-lockup .brand-title{
+  font-size:clamp(16px,4vw,22px);
+  white-space:normal;
+}
+.brand-lockup .brand-title span{
+  font-size:clamp(12px,3vw,16px);
+}
 }
 </style>
 </head>
 <body>
 <div class="container">
 <div id="start" class="card">
+
 <div class="brand-lockup">
-<div class="brand-logo brand-logo-calclandia"><img src="logo_calclandia.jpeg" alt="Logo de CALCLANDIA"></div>
-<div class="brand">
- <h1 class="brand-title">PRIMERA AVENTURA<span>Tu cerebro en 90 segundos</span></h1>
- <div class="brand-rule"></div>
+  <div class="brand-logo brand-logo-calclandia">
+    <img src="logo_calclandia.jpeg" alt="Logo de CALCLANDIA">
+  </div>
+
+  <div class="brand">
+    <h1 class="brand-title">
+      PRIMERA AVENTURA
+      <span>Tu cerebro en 90 segundos</span>
+    </h1>
+    <div class="brand-rule"></div>
+  </div>
+
+  <div class="brand-logo brand-logo-cacho">
+    <img src="logo_cacho_aritmetico.png" alt="Logo de Cacho Aritmético">
+  </div>
 </div>
-<div class="brand-support">
- <div class="brand-logo brand-logo-cacho"><img src="logo_cacho_aritmetico.png" alt="Logo de Cacho Aritmético"></div>
+
+ <div id="puertaCalclandia">
+  <h1>¡Bienvenido a CALCLANDIA!</h1>
+
+  <p>Aquí no buscamos compararte con los demás.<br>
+  <strong>Queremos ayudarte a encontrar la mejor versión de ti mismo.</strong></p>
+
+  <p><strong>Siempre tendremos presente tus logros en CALCLANDIA.</strong></p>
+
+  <h2>¿Ya jugaste aquí?</h2>
+
+  <div>
+    <button type="button" id="btnYaJugoSi">SÍ</button>
+    <button type="button" id="btnYaJugoNo">NO</button>
+  </div>
 </div>
-</div>
+ <div id="formularioAnterior" class="hidden">
 <p class="intro">Identifícate para registrar tu participación en el Centro de Torneos CALCLANDIA.<br>Luego presiona COMENZAR.</p>
 <p>⚡ Puntuación · 🎯 Precisión · 🏆 Nivel alcanzado</p>
 <div class="form-grid">
@@ -171,6 +253,7 @@ input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding
 <button id="startButton" onclick="startGame()">COMENZAR</button>
 <div id="identityStatus" class="identity-status" aria-live="polite"></div>
 </div>
+</div>
 
 <div id="identityDialog" class="identity-dialog hidden" role="dialog" aria-modal="true" aria-labelledby="identityTitle">
  <div class="identity-panel">
@@ -200,6 +283,9 @@ input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding
 <p><strong>Tu cerebro en 90 segundos</strong></p>
 <p style="margin-bottom:4px;color:#012060;font-weight:700">Puntuación de esta aventura</p>
 <div class="big" id="score"></div>
+<div id="numeroPartidaConfirmada"
+     style="display:none;margin:12px auto;color:#087443;font-weight:700;font-size:18px;">
+</div>
 <div class="result">
 🎯 Precisión: <span id="precision"></span><br>
 🚀 Correctas: <span id="correct"></span><br>
@@ -221,14 +307,17 @@ input,select{font-size:20px;width:100%;max-width:420px;text-align:center;padding
 </div>
 <div id="saveStatus">Registrando resultado...</div>
 <button id="shareButton" onclick="shareResult()" disabled>ESPERA: REGISTRANDO RESULTADO…</button>
-<div class="community-box">
- <h2>Comunidad CALCLANDIA</h2>
- <p>Recibe resúmenes, novedades e invitaciones a próximos torneos.</p>
- <p class="guardian-note">Si eres menor de edad, pide a tu madre, padre o tutor que realice el contacto.</p>
- <a id="communityLink" class="community-button" href="https://wa.me/59171182342" target="_blank" rel="noopener noreferrer">QUIERO SUMARME POR WHATSAPP</a>
+
+<div style="margin:20px auto;text-align:center;">
+  <a id="communityLink" class="community-button"
+     href="https://wa.me/59171182342"
+     target="_blank" rel="noopener noreferrer">
+    QUIERO RECIBIR RESÚMENES E INVITACIONES A PRÓXIMOS EVENTOS POR WHATSAPP
+  </a>
 </div>
+
 <br><br>
-<button onclick="location.reload()">JUGAR DE NUEVO</button>
+<button type="button" onclick="jugarDeNuevoCalclandia_()">JUGAR DE NUEVO</button>
 </div>
 </div>
 
@@ -407,38 +496,281 @@ async function startGame(){
  boton.disabled=true;
  boton.innerText='VERIFICANDO…';
  estadoIdentidad.innerText='Comprobando tu identidad de forma segura…';
- try{
-   const decision=await verificarIdentidadAntesDeComenzar_(datosProvisionales);
-   if(!decision){
+ try {
+  const decision = window.calclandiaParticipanteConfirmado?.idCtcInterno
+    ? { identidadNuevaComprobada: true }
+    : await verificarIdentidadAntesDeComenzar_(datosProvisionales);
+   if (!decision || !Object.keys(decision).length) {
      estadoIdentidad.innerText='Revisa o corrige tus datos antes de comenzar.';
      return;
    }
-   playerData=Object.assign({},datosProvisionales,decision);
- }catch(error){
-   console.error(error);
-   estadoIdentidad.innerText='No fue posible verificar la identidad. Inténtalo nuevamente.';
-   alert('No fue posible verificar tu identidad. No se registró nada. Revisa tu conexión e inténtalo nuevamente.');
-   return;
- }finally{
-   identityCheckInProgress=false;
-   boton.disabled=false;
-   boton.innerText='COMENZAR';
- }
- estadoIdentidad.innerText='';
- localStorage.setItem("ctcPlayerData90", JSON.stringify(playerData));
- gameStartTime=Date.now();
- document.getElementById("start").classList.add("hidden");
- document.getElementById("game").classList.remove("hidden");
- generateQuestion();
- document.getElementById("answer").focus();
+       if (
+          decision.identidadNuevaComprobada === true ||
+          decision.id_ctc_confirmado
+        ) {
 
- timer=setInterval(()=>{
-  timeLeft--;
-  document.getElementById("timer").innerText=timeLeft;
-  if(timeLeft<=0) endGame();
- },1000);
+  const idCTC =
+    decision.id_ctc_confirmado ||
+    window.calclandiaParticipanteConfirmado?.idCtcInterno ||
+    '';
+  
+  if (idCTC) {
+    if (!window.calclandiaParticipanteConfirmado?.idCtcInterno) {
+      window.calclandiaParticipanteConfirmado = {
+        idCtcInterno: idCTC,
+        participante: {
+          participante: datosProvisionales.participante,
+          fechaNacimiento: datosProvisionales.fecha_nacimiento,
+          municipio: datosProvisionales.ciudad,
+          pais: datosProvisionales.pais
+        }
+      };
+    }
+
+  const idPartida =
+    window.calclandiaIdPartidaActual || crearIdPartida();
+
+  window.calclandiaIdPartidaActual = idPartida;
+
+  estadoIdentidad.innerText =
+    'Recuperando la preparación de tu partida...';
+
+  const respuestaHttp = await fetch(URL_APPS_SCRIPT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify({
+      accion: 'INICIAR_PARTIDA_CALCLANDIA',
+      id_ctc: idCTC,
+      id_partida: idPartida
+    })
+  });
+
+  if (!respuestaHttp.ok) {
+    throw new Error('No fue posible recuperar la reserva.');
+  }
+
+  const respuesta = await respuestaHttp.json();
+
+  if (respuesta.ok !== true) {
+    throw new Error(
+      respuesta.mensaje || 'La reserva no fue confirmada.'
+    );
+  }
+
+  window.calclandiaPartidaPreparada = {
+    idPartida: idPartida,
+    numeroReservado:
+      respuesta.numeroGeneralReservado ||
+      respuesta.numeroReservado ||
+      null,
+    respuestaBackend: respuesta
+  };
+
+  playerData = Object.assign({}, datosProvisionales, {
+    id_ctc: idCTC,
+    id_ctc_confirmado: idCTC
+  });
+  
+  estadoIdentidad.innerText = '';
+  
+  mostrarPartidaReservadaCalclandia_();
+  
+  return;
 }
 
+      estadoIdentidad.innerText =
+        'Registrando tu identidad en CALCLANDIA...';
+
+      const respuestaHttp = await fetch(URL_APPS_SCRIPT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          accion: 'CREAR_NUEVO_PARTICIPANTE_CALCLANDIA',
+          participante: datosProvisionales.participante,
+          fecha_nacimiento: datosProvisionales.fecha_nacimiento,
+          pais: datosProvisionales.pais,
+          municipio_region: datosProvisionales.ciudad,
+          relacion_car: datosProvisionales.relacion_car
+        })
+      });
+
+      if (!respuestaHttp.ok) {
+        throw new Error('No fue posible registrar al participante.');
+      }
+
+      const creacion = await respuestaHttp.json();
+
+      if (
+        creacion.ok !== true ||
+        creacion.codigo !== 'PARTICIPANTE_CREADO' ||
+        !creacion.idCtcInterno ||
+        !creacion.participante?.claveCalclandia
+      ) {
+        throw new Error(
+          'La creación no fue confirmada: ' +
+          (creacion.codigo || 'SIN_CODIGO')
+        );
+      }
+
+      const ficha = creacion.participante;
+
+      const idCTCCreado = creacion.idCtcInterno;
+      
+      if (!idCTCCreado) {
+        throw new Error('El servidor no devolvió el ID CTC definitivo.');
+      }         
+         
+      playerData = Object.assign({}, datosProvisionales, {
+        id_ctc: idCTCCreado,
+        id_ctc_confirmado: idCTCCreado,
+        participante: ficha.nombre || datosProvisionales.participante,
+        fecha_nacimiento:
+          ficha.fechaNacimiento || datosProvisionales.fecha_nacimiento,
+        pais: ficha.pais || datosProvisionales.pais,
+        ciudad: ficha.municipio || datosProvisionales.ciudad,
+        relacion_car: datosProvisionales.relacion_car
+      });
+
+      window.calclandiaParticipanteConfirmado = {
+        idCtcInterno: idCTCCreado,
+        participante: ficha
+      };
+
+      estadoIdentidad.innerText =
+        'Tu identidad fue registrada correctamente.';
+
+      alert(
+        '¡Bienvenido a CALCLANDIA!\n\n' +
+        'Tu Clave CALCLANDIA es: ' +
+        ficha.claveCalclandia +
+        '\n\nGuárdala. La utilizarás para encontrarte ' +
+        'en tus próximas visitas.'
+      );
+
+      const idPartida = crearIdPartida();
+
+      window.calclandiaIdPartidaActual = idPartida;
+
+      const reservaHttp = await fetch(URL_APPS_SCRIPT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          accion: 'INICIAR_PARTIDA_CALCLANDIA',
+          id_ctc: idCTCCreado,
+          id_partida: idPartida
+        })
+      });
+
+      if (!reservaHttp.ok) {
+        throw new Error('No fue posible preparar la primera partida.');
+      }
+
+      const reserva = await reservaHttp.json();
+
+      if (reserva.ok !== true) {
+        throw new Error(
+          reserva.mensaje || 'La reserva no fue confirmada.'
+        );
+      }
+
+      window.calclandiaPartidaPreparada = {
+        idPartida: idPartida,
+        numeroReservado:
+          reserva.numeroGeneralReservado ||
+          reserva.numeroReservado ||
+          null,
+        respuestaBackend: reserva
+      };
+
+      playerData = Object.assign({}, datosProvisionales, {
+        id_ctc: idCTCCreado,
+        id_ctc_confirmado: idCTCCreado
+      });
+      
+      estadoIdentidad.innerText = '';
+      
+      mostrarPartidaReservadaCalclandia_();
+      
+      return;
+    }
+
+    playerData = Object.assign({}, datosProvisionales, decision);
+
+  } catch (error) {
+
+    console.error('CALCLANDIA - Ruta C:', error);
+
+    estadoIdentidad.innerText =
+      'No fue posible completar el proceso. Inténtalo nuevamente.';
+
+    alert(
+      'No fue posible completar el proceso.\n\n' +
+      'Si ya recibiste tu Clave CALCLANDIA, ' +
+      'consérvala y utiliza la opción SÍ, YA JUGUÉ ' +
+      'para continuar sin crear otra identidad.'
+    );
+
+    return;
+
+  } finally {
+
+    identityCheckInProgress = false;
+    boton.disabled = false;
+    boton.innerText = 'COMENZAR';
+
+  }
+
+  estadoIdentidad.innerText = '';
+
+if (window.calclandiaPartidaPreparada?.idPartida) {
+  mostrarPartidaReservadaCalclandia_();
+} else {
+  estadoIdentidad.innerText =
+    'No se pudo preparar la partida. Inténtalo nuevamente.';
+}
+}
+
+// ===== MOTOR DE JUEGO CALCLANDIA =====
+function iniciarMotorJuegoCalclandia_() {
+  const avisoPartida = document.getElementById('numeroPartidaConfirmada');
+  if (avisoPartida) {
+    avisoPartida.style.display = 'none';
+    avisoPartida.innerText = '';
+  }
+  clearInterval(timer);
+  timeLeft = 90;
+  document.getElementById("timer").innerText = timeLeft;
+
+  localStorage.setItem(
+    "ctcPlayerData90",
+    JSON.stringify(playerData)
+  );
+
+  gameStartTime = Date.now();
+
+  document.getElementById("start").classList.add("hidden");
+  document.getElementById("game").classList.remove("hidden");
+
+  generateQuestion();
+  document.getElementById("answer").focus();
+
+  timer = setInterval(() => {
+    timeLeft--;
+    document.getElementById("timer").innerText = timeLeft;
+
+    if (timeLeft <= 0) {
+      endGame();
+    }
+  }, 1000);
+}
+// ===== FIN MOTOR DE JUEGO CALCLANDIA =====
+ 
 async function consultarIdentidadPrevia_(datos){
  const respuestaHttp=await fetch(URL_APPS_SCRIPT,{
    method:'POST',
@@ -513,7 +845,42 @@ function solicitarDecisionIdentidad_(respuesta){
 
 async function verificarIdentidadAntesDeComenzar_(datos){
  const respuesta=await consultarIdentidadPrevia_(datos);
- if(respuesta.codigo==='IDENTIDAD_NUEVA') return {};
+if (respuesta.codigo === 'IDENTIDAD_NUEVA') {
+  const respuestaHttp = await fetch(URL_APPS_SCRIPT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'text/plain;charset=utf-8'
+    },
+    body: JSON.stringify({
+      accion: 'COMPROBAR_NUEVO_PARTICIPANTE_CALCLANDIA',
+      participante: datos.participante,
+      fecha_nacimiento: datos.fecha_nacimiento,
+      pais: datos.pais,
+      municipio_region: datos.ciudad
+    })
+  });
+
+  if (!respuestaHttp.ok) {
+    throw new Error('No fue posible comprobar la identidad.');
+  }
+
+  const comprobacion = await respuestaHttp.json();
+
+  if (
+    comprobacion.ok === true &&
+    comprobacion.codigo === 'IDENTIDAD_NUEVA_POSIBLE' &&
+    comprobacion.puedeCrear === true
+  ) {
+    return {
+      identidadNuevaComprobada: true
+    };
+  }
+
+  throw new Error(
+    'La identidad requiere revisión antes de crear un participante: ' +
+    (comprobacion.codigo || 'SIN_CODIGO')
+  );
+}
  if(
    respuesta.codigo==='IDENTIDAD_ENCONTRADA' ||
    respuesta.codigo==='IDENTIDAD_RELACIONADA' ||
@@ -650,7 +1017,13 @@ function getDispositivo(){
 
 async function enviarResultadoAutomatico(resultado) {
   const payload = {
-    id_partida: crearIdPartida(),
+    id_partida:
+     window.calclandiaIdPartidaActual ||
+     crearIdPartida(),
+   
+     numero_reservado:
+      window.calclandiaPartidaPreparada?.numeroReservado || '',
+   
     participante: playerData.participante || '',
     pais: playerData.pais || 'Bolivia',
     ciudad: playerData.ciudad || '',
@@ -847,6 +1220,9 @@ async function enviarResultadoAutomatico(resultado) {
 }
  
 function endGame(){
+ if (resultAlreadySent) return;
+ resultAlreadySent = true;
+
  clearInterval(timer);
  document.getElementById("game").classList.add("hidden");
  document.getElementById("result").classList.remove("hidden");
@@ -893,8 +1269,7 @@ document.getElementById("score").innerText=score;
    box.classList.add("hidden");
  }
 
- if (!resultAlreadySent) {
-  resultAlreadySent = true;
+ {
 
   const resultado = {
     puntuacion: score,
@@ -915,6 +1290,14 @@ document.getElementById("score").innerText=score;
 
   enviarResultadoAutomatico(resultado)
     .then(function(respuesta) {
+      const numeroDefinitivo = respuesta.numeroDefinitivo || respuesta.numero_definitivo || respuesta.registro;
+      const avisoPartida = document.getElementById('numeroPartidaConfirmada');
+      
+      if (numeroDefinitivo && avisoPartida) {
+        avisoPartida.innerText =
+          '✅ ¡Tu partida quedó registrada con el N.º ' + numeroDefinitivo + '!';
+        avisoPartida.style.display = 'block';
+      }
       mostrarRecordsOficiales_(respuesta);
       estadoGuardado.innerText =
         '✅ Resultado registrado automáticamente.';
@@ -950,7 +1333,7 @@ document.getElementById("score").innerText=score;
 
 function prepararEnlaceComunidad_(){
  const nombre=(playerData.participante||'').trim();
- const mensaje='Hola. Deseo recibir información para sumarme a la Comunidad CALCLANDIA.'+
+ const mensaje='Hola. Deseo recibir resúmenes y más información.'+
    (nombre ? '\nParticipante: '+nombre : '');
  document.getElementById('communityLink').href=
    'https://wa.me/59171182342?text='+encodeURIComponent(mensaje);
@@ -1047,6 +1430,693 @@ Tu cerebro en 90 segundos
 
  prompt('Copia tu resultado y la invitación:',textoCompleto);
 }
+
+ // ===== CALCLANDIA - BLOQUE 1D: PARTICIPANTE QUE REGRESA =====
+const btnYaJugoSi = document.getElementById('btnYaJugoSi');
+
+if (btnYaJugoSi) {
+  btnYaJugoSi.addEventListener('click', function () {
+    const puerta = document.getElementById('puertaCalclandia');
+    const formulario = document.getElementById('formularioAnterior');
+
+    if (puerta) {
+      puerta.innerHTML = `
+        <h1 style="color:#ffffff;">¡Qué bueno tenerte de vuelta!</h1>
+
+        <p><strong>Queremos encontrarte para recordar tus logros.</strong></p>
+
+        <h2>¿Cuál es tu Clave CALCLANDIA?</h2>
+
+        <input
+          type="number"
+          id="claveCalclandia"
+          inputmode="numeric"
+          min="1"
+          placeholder="327"
+          style="max-width:220px;"
+        >
+
+       <div style="margin-top:16px;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;">
+          <button type="button" id="btnEncontrame">ENCUÉNTRAME</button>
+          <button type="button" id="btnNoRecuerdo">NO LA RECUERDO</button>
+        </div>
+      `;
+    }
+
+    if (formulario) {
+      formulario.classList.add('hidden');
+    }
+  });
+}
+// ===== FIN BLOQUE 1D =====
+
+  
+// ===== CALCLANDIA - RUTA C: PARTICIPANTE NUEVO =====
+const btnYaJugoNo = document.getElementById('btnYaJugoNo');
+
+if (btnYaJugoNo) {
+  btnYaJugoNo.addEventListener('click', function () {
+    const puerta = document.getElementById('puertaCalclandia');
+    const formulario = document.getElementById('formularioAnterior');
+
+    if (puerta && formulario) {
+      puerta.classList.add('hidden');
+      formulario.classList.remove('hidden');
+    }
+  });
+}
+// ===== FIN RUTA C: ACCESO AL FORMULARIO =====
+
+
+ // ===== CALCLANDIA - BLOQUE 1E: BUSCAR POR CLAVE =====
+document.addEventListener('click', async function (event) {
+
+  if (event.target.id !== 'btnEncontrame') return;
+
+  const inputClave = document.getElementById('claveCalclandia');
+  const puerta = document.getElementById('puertaCalclandia');
+
+  const clave = inputClave ? inputClave.value.trim() : '';
+
+  if (!clave) {
+    alert('Escribe tu Clave CALCLANDIA.');
+    if (inputClave) inputClave.focus();
+    return;
+  }
+
+  const boton = event.target;
+  const textoOriginal = boton.innerText;
+
+  boton.disabled = true;
+  boton.innerText = 'BUSCANDO...';
+
+  try {
+
+    const respuesta = await fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({
+        accion: 'BUSCAR_CLAVE_CALCLANDIA',
+        clave_calclandia: clave
+      })
+    });
+
+    const resultado = await respuesta.json();
+
+    if (!resultado.ok || !resultado.encontrado || !resultado.participante) {
+
+      puerta.innerHTML = `
+        <h1 style="color:#ffffff;">No pudimos encontrarte con esa clave</h1>
+
+        <p>No importa. Podemos buscarte de otra manera.</p>
+
+        <div style="margin-top:16px;">
+          <button type="button" id="btnNoRecuerdo">NO LA RECUERDO</button>
+          <button type="button" onclick="location.reload()">VOLVER</button>
+        </div>
+      `;
+
+      return;
+    }
+
+    const p = resultado.participante;
+    const indicadores = p.indicadores || {};
+
+    const precision =
+      Number(indicadores.mejorPrecision || 0) <= 1
+        ? Math.round(Number(indicadores.mejorPrecision || 0) * 100)
+        : Math.round(Number(indicadores.mejorPrecision || 0));
+
+    const partidas = Number(indicadores.partidasJugadas || 0);
+
+    puerta.innerHTML = `
+      <h1 style="color:#ffffff;">¡Hola, ${p.nombre || p.participante || ''}!</h1>
+
+      <p><strong>¡Claro que te recordamos!</strong></p>
+
+      <div style="margin:20px auto;max-width:420px;text-align:left;">
+        <p>🏆 Tu mayor puntuación: <strong>${indicadores.mejorPuntuacion || 0}</strong></p>
+        <p>🎯 Tu mejor precisión: <strong>${precision} %</strong></p>
+        <p>🎲 Has jugado <strong>${partidas}</strong> partidas</p>
+      </div>
+
+      <p>La que estás por comenzar será</p>
+
+      <h2>tu partida N.º ${partidas + 1}</h2>
+
+      <h2>¿Eres tú?</h2>
+
+      <div>
+        <button type="button" id="btnIdentidadSi">SÍ</button>
+        <button type="button" id="btnIdentidadNo">NO</button>
+      </div>
+    `;
+
+ window.calclandiaParticipanteEncontrado = {
+  participante: p,
+  idCtcInterno: resultado.idCtcInterno || '',
+  indicadores: {
+    mejorPuntuacion: Number(indicadores.mejorPuntuacion || 0),
+    mejorPrecision: Number(indicadores.mejorPrecision || 0),
+    partidasJugadas: partidas
+  }
+};
+   
+  } catch (error) {
+
+    console.error(error);
+
+    puerta.innerHTML = `
+      <h1 style="color:#ffffff;">Sigamos adelante</h1>
+
+      <p>No pudimos comprobar tu clave en este momento.</p>
+      <p><strong>Esto no impedirá que juegues.</strong></p>
+
+      <button type="button" id="btnNoRecuerdo">CONTINUAR</button>
+    `;
+
+  } finally {
+
+    if (document.body.contains(boton)) {
+      boton.disabled = false;
+      boton.innerText = textoOriginal;
+    }
+  }
+});
+
+// ===== FIN BLOQUE 1E =====
+
+// ===== BLOQUE 1E-B: RECUPERACION SIN CLAVE =====
+
+document.addEventListener('click', function(event) {
+
+  if (event.target.id !== 'btnNoRecuerdo') return;
+
+  const puerta = document.getElementById('puertaCalclandia');
+
+  if (!puerta) return;
+
+  puerta.innerHTML = `
+    <h1 style="color:#ffffff;">¡Vamos a encontrarte!</h1>
+
+    <p>Si no recuerdas tu Clave CALCLANDIA,
+    podemos buscar tu registro.</p>
+
+    <p><strong>Escribe tus nombres y apellidos completos</strong></p>
+    <input type="text" id="buscameNombre"
+      autocomplete="name" style="width:100%;max-width:360px;">
+
+    <p><strong>Fecha de nacimiento</strong></p>
+    <input type="date" id="buscameFecha">
+
+    <p><strong>Municipio o ciudad</strong></p>
+    <input type="text" id="buscameMunicipio"
+      style="width:100%;max-width:360px;">
+
+    <div style="margin-top:20px;">
+      <button type="button" id="btnBuscameCalclandia">
+        BÚSCAME
+      </button>
+    </div>
+
+    <p style="font-size:0.85em;margin-top:16px;">
+      Tus datos se utilizarán para localizar tu registro.
+    </p>
+  `;
+
+});
+
+// ===== FIN BLOQUE 1E-B =====
+
+// ===== BLOQUE 1E-C: BUSCAME EN CTC =====
+
+document.addEventListener('click', async function(event) {
+
+  if (event.target.id !== 'btnBuscameCalclandia') return;
+
+  const nombre = document.getElementById('buscameNombre');
+  const fecha = document.getElementById('buscameFecha');
+  const municipio = document.getElementById('buscameMunicipio');
+  const puerta = document.getElementById('puertaCalclandia');
+  const boton = event.target;
+
+  if (!nombre || !fecha || !municipio || !puerta) return;
+
+  const participante = nombre.value.trim();
+  const nacimiento = fecha.value;
+  const ciudad = municipio.value.trim();
+
+  if (!participante || !nacimiento || !ciudad) {
+    alert('Completa los tres datos para buscar tu registro.');
+    return;
+  }
+
+  boton.disabled = true;
+  boton.innerText = 'BUSCANDO...';
+
+  try {
+
+    const respuesta = await fetch(URL_APPS_SCRIPT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify({
+        accion: 'BUSCAR_PARTICIPANTE_CALCLANDIA',
+        participante: participante,
+        fecha_nacimiento: nacimiento,
+        municipio_region: ciudad,
+        pais: 'BOLIVIA'
+      })
+    });
+
+    if (!respuesta.ok) {
+      throw new Error('No se pudo consultar el servidor.');
+    }
+
+    const resultado = await respuesta.json();
+
+    if (
+      resultado.ok === true &&
+      resultado.codigo === 'PARTICIPANTE_ENCONTRADO' &&
+      resultado.encontrado === true &&
+      resultado.participante
+    ) {
+
+      const p = resultado.participante;
+      const indicadores = p.indicadores || {};
+
+      window.calclandiaParticipanteEncontrado = {
+        participante: p,
+        idCtcInterno: resultado.idCtcInterno || '',
+        indicadores: {
+          partidasJugadas: Number(indicadores.partidasJugadas || 0),
+          mejorPuntuacion: Number(indicadores.mejorPuntuacion || 0),
+          mejorPrecision: Number(indicadores.mejorPrecision || 0)
+        }
+      };
+
+      const nombreSeguro = document.createElement('div');
+      nombreSeguro.textContent = p.nombre || '';
+      const nombreVisible = nombreSeguro.innerHTML;
+
+      puerta.innerHTML = `
+        <h1 style="color:#ffffff;">¡Te encontramos!</h1>
+
+        <h2>${nombreVisible}</h2>
+
+        <p>Tu Clave CALCLANDIA es:</p>
+        <h2>${p.claveCalclandia}</h2>
+
+        <p>Partidas jugadas: ${Number(indicadores.partidasJugadas || 0)}</p>
+
+        <h2>¿Eres tú?</h2>
+
+        <button type="button" id="btnIdentidadSi">SÍ</button>
+        <button type="button" id="btnIdentidadNo">NO</button>
+      `;
+
+      return;
+    }
+
+    if (resultado.codigo === 'DATOS_INCOMPLETOS') {
+      alert('Revisa los tres datos e inténtalo nuevamente.');
+      return;
+    }
+
+    if (resultado.codigo === 'SIN_COINCIDENCIAS') {
+      alert(
+        '¡No encontramos tu registro!\n\n' +
+        'Revisa que hayas escrito correctamente tus nombres y apellidos completos, ' +
+        'tu fecha de nacimiento y tu municipio.\n\n' +
+        'Corrige los datos e inténtalo nuevamente.'
+      );
+      return;
+    }
+    
+    if (resultado.codigo === 'IDENTIDAD_PENDIENTE') {
+      alert(
+        'No hemos podido identificar tu registro con seguridad. ' +
+        'Por ahora, revisa tus datos e inténtalo nuevamente.'
+      );
+      return;
+    }
+
+    alert('No fue posible completar la búsqueda. Inténtalo nuevamente.');
+
+  } catch (error) {
+
+    console.error('Error en BÚSCAME:', error);
+
+    alert(
+      'No pudimos consultar tu registro en este momento. ' +
+      'Inténtalo nuevamente.'
+    );
+
+  } finally {
+
+    if (document.body.contains(boton)) {
+      boton.disabled = false;
+      boton.innerText = 'BÚSCAME';
+    }
+  }
+
+});
+
+// ===== FIN BLOQUE 1E-C =====
+  
+// ===== BLOQUE 1F: CONFIRMAR PARTICIPANTE =====
+document.addEventListener('click', function(event) {
+  if (event.target.id !== 'btnIdentidadSi') return;
+
+  const p = window.calclandiaParticipanteEncontrado;
+  const puerta = document.getElementById('puertaCalclandia');
+
+  if (!p || !puerta) {
+    console.warn('CALCLANDIA: participante no disponible.');
+    return;
+  }
+
+  // Guardamos la identidad confirmada para los pasos siguientes.
+  window.calclandiaParticipanteConfirmado = p;
+
+  const participante = p.participante || {};
+const indicadores = p.indicadores || {};
+
+const nombre = participante.nombre || participante.participante || '';
+
+const partidas =
+  Number(indicadores.partidasJugadas || 0);
+
+const proximaPartida = partidas + 1;
+
+const puntuacion =
+  Number(indicadores.mejorPuntuacion || 0);
+
+let precision =
+  Number(indicadores.mejorPrecision || 0);
+
+  if (precision > 0 && precision <= 1) {
+    precision *= 100;
+  }
+
+  puerta.innerHTML = `
+    <h1 style="color:#ffffff;">¡ESTUPENDO!</h1>
+
+    <h2>Hoy tienes una nueva oportunidad</h2>
+
+    <p><strong>Tu reto es superar tu mejor versión:</strong></p>
+
+    <p>🏆 Mayor puntuación: <strong>${puntuacion}</strong></p>
+    <p>🎯 Mejor precisión: <strong>${precision.toFixed(precision % 1 ? 1 : 0)} %</strong></p>
+
+    <p style="margin-top:22px;">
+      Y formas parte de una comunidad que crece con cada partida.
+    </p>
+
+    <button type="button" id="btnPrepararPartidaCalclandia">
+      COMENZAR
+    </button>
+  `;
+});
+// ===== FIN BLOQUE 1F ===== 
+
+// ===== BLOQUE 1G: PREPARAR PARTIDA CALCLANDIA =====
+document.addEventListener('click', async function(event) {
+  if (event.target.id !== 'btnPrepararPartidaCalclandia') return;
+
+  const confirmado = window.calclandiaParticipanteConfirmado;
+  const boton = event.target;
+
+  if (!confirmado || !confirmado.participante) {
+    console.warn('CALCLANDIA: participante confirmado no disponible.');
+    return;
+  }
+
+  const participante = confirmado.participante;
+  const idCTC =
+  confirmado.idCtcInterno ||
+  participante.idCTC ||
+  participante.id_ctc ||
+  '';
+ 
+  if (!idCTC) {
+    console.warn('CALCLANDIA: ID CTC canónico no disponible.');
+    return;
+  }
+
+  // Un solo ID para todo el ciclo de esta partida.
+  const idPartida =
+    window.calclandiaIdPartidaActual || crearIdPartida();
+
+  window.calclandiaIdPartidaActual = idPartida;
+
+  boton.disabled = true;
+  boton.innerText = 'PREPARANDO...';
+
+  try {
+    const respuestaHttp = await fetch(
+      URL_APPS_SCRIPT,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          accion: 'INICIAR_PARTIDA_CALCLANDIA',
+          id_ctc: idCTC,
+          id_partida: idPartida
+        })
+      }
+    );
+
+    const texto = await respuestaHttp.text();
+    const respuesta = JSON.parse(texto);
+
+    if (!respuesta.ok) {
+      throw new Error(
+        respuesta.mensaje ||
+        'No se pudo preparar la partida.'
+      );
+    }
+
+    window.calclandiaPartidaPreparada = {
+      idPartida: idPartida,
+      numeroReservado:
+        respuesta.numeroGeneralReservado ||
+        respuesta.numeroReservado ||
+        null,
+      respuestaBackend: respuesta
+    };
+
+    console.log(
+      'CALCLANDIA - PARTIDA PREPARADA',
+      window.calclandiaPartidaPreparada
+    );
+
+    boton.innerText = 'PARTIDA PREPARADA';
+
+   // Preparamos los datos del participante para el motor del juego.
+   playerData = {
+     participante: participante.participante || '',
+     fecha_nacimiento:
+       participante.fechaNacimiento ||
+       participante.fecha_nacimiento ||
+       '',
+     pais: participante.pais || 'Bolivia',
+     ciudad:
+       participante.municipio ||
+       participante.ciudad ||
+       '',
+     municipio:
+       participante.municipio ||
+       participante.ciudad ||
+       '',
+     relacion:
+       participante.relacion ||
+       participante.relacion_car ||
+       '',
+     id_ctc: idCTC,
+     id_ctc_confirmado: idCTC
+   };
+   
+   // La partida ya tiene identidad, ID PARTIDA y reserva.
+   // Ahora sí iniciamos los 90 segundos.
+   mostrarPartidaReservadaCalclandia_();
+
+  } catch (error) {
+    console.error(
+      'CALCLANDIA: error al preparar partida.',
+      error
+    );
+
+    boton.disabled = false;
+    boton.innerText = 'COMENZAR';
+  }
+});
+// ===== FIN BLOQUE 1G =====
+
+// ===== PANTALLA PREVIA A CADA PARTIDA =====
+function mostrarPartidaReservadaCalclandia_() {
+  const reserva = window.calclandiaPartidaPreparada;
+  const numero = reserva?.numeroReservado;
+
+  const puerta = document.getElementById('puertaCalclandia');
+  const resultado = document.getElementById('result');
+
+  if (!reserva || !puerta) {
+    console.warn('CALCLANDIA: reserva no disponible.');
+    return;
+  }
+
+  if (resultado) resultado.classList.add('hidden');
+
+  puerta.innerHTML = `
+    <h1 style="color:#ffffff;">¡TODO PREPARADO!</h1>
+
+    <p>El número reservado para la Partida que jugarás es:</p>
+
+    <h1 style="color:#ffbf00;">
+      ${numero ?? 'Pendiente de asignación'}
+    </h1>
+
+    <button type="button" id="btnJugarPartidaReservada">
+      ¡A JUGAR!
+    </button>
+  `;
+
+  document.getElementById('formularioAnterior').classList.add('hidden');
+  puerta.classList.remove('hidden');
+  document.getElementById('start').classList.remove('hidden');
+}
+
+// ===== INICIAR PARTIDA DESDE PANTALLA PREVIA =====
+document.addEventListener('click', function(event) {
+  if (event.target.id !== 'btnJugarPartidaReservada') return;
+
+  const boton = event.target;
+  boton.disabled = true;
+
+  iniciarMotorJuegoCalclandia_();
+});
+
+// ===== BLOQUE 1H: JUGAR DE NUEVO EN LA MISMA SESIÓN =====
+async function jugarDeNuevoCalclandia_() {
+
+  const confirmado = window.calclandiaParticipanteConfirmado;
+
+  if (!confirmado || !confirmado.participante) {
+    console.warn(
+      'CALCLANDIA: no existe una identidad confirmada para esta sesión.'
+    );
+    return;
+  }
+
+  // La identidad se conserva.
+  // Todo lo perteneciente a la partida anterior se descarta.
+  clearInterval(timer);
+
+  timeLeft = 90;
+  level = 1;
+  maxLevel = 1;
+  correct = 0;
+  errors = 0;
+  streak = 0;
+  maxStreak = 0;
+  upCount = 0;
+  downCount = 0;
+  currentAnswer = 0;
+  currentExpr = '';
+  mistakes = [];
+  gameStartTime = null;
+  resultAlreadySent = false;
+
+  // La nueva partida debe tener identidad técnica propia.
+  window.calclandiaIdPartidaActual = null;
+  window.calclandiaPartidaPreparada = null;
+
+  const participante = confirmado.participante;
+
+  const idCTC =
+    confirmado.idCtcInterno ||
+    participante.idCTC ||
+    participante.id_ctc ||
+    '';
+
+  if (!idCTC) {
+    console.warn(
+      'CALCLANDIA: ID CTC canónico no disponible para nueva partida.'
+    );
+    return;
+  }
+
+  const idPartida = crearIdPartida();
+  window.calclandiaIdPartidaActual = idPartida;
+
+  try {
+    const respuestaHttp = await fetch(
+      URL_APPS_SCRIPT,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8'
+        },
+        body: JSON.stringify({
+          accion: 'INICIAR_PARTIDA_CALCLANDIA',
+          id_ctc: idCTC,
+          id_partida: idPartida
+        })
+      }
+    );
+
+    const texto = await respuestaHttp.text();
+    const respuesta = JSON.parse(texto);
+
+    if (!respuesta.ok) {
+      throw new Error(
+        respuesta.mensaje ||
+        'No se pudo preparar la nueva partida.'
+      );
+    }
+
+    window.calclandiaPartidaPreparada = {
+      idPartida: idPartida,
+      numeroReservado:
+        respuesta.numeroGeneralReservado ||
+        respuesta.numeroReservado ||
+        null,
+      respuestaBackend: respuesta
+    };
+
+    // Conservamos al participante ya identificado.
+    // Sólo actualizamos los datos necesarios para registrar la nueva partida.
+    playerData.id_ctc = idCTC;
+    playerData.id_ctc_confirmado = idCTC;
+
+    document.getElementById('result').classList.add('hidden');
+
+    mostrarPartidaReservadaCalclandia_();
+
+  } catch (error) {
+    console.error(
+      'CALCLANDIA: error al preparar nueva partida.',
+      error
+    );
+
+    window.calclandiaIdPartidaActual = null;
+    window.calclandiaPartidaPreparada = null;
+
+    alert(
+      'No pudimos preparar una nueva partida en este momento. ' +
+      'Inténtalo nuevamente.'
+    );
+  }
+}
+// ===== FIN BLOQUE 1H =====
+ 
 </script>
+
 </body>
 </html>
